@@ -19,3 +19,5 @@ Route::get('/', function () {
 Route::get('{slug}', function (){
     return view('welcome');
 });
+
+Route::get('/home', 'HomeController@index')->name('home');
