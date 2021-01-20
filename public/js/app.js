@@ -1973,35 +1973,116 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  created: function created() {
-    var _this = this;
+  data: function data() {
+    return {
+      data: {
+        tagName: ""
+      },
+      addModal: false,
+      isAdding: false,
+      tags: []
+    };
+  },
+  methods: {
+    addTag: function addTag() {
+      var _this = this;
 
-    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!(_this.data.tagName.trim() == "")) {
+                  _context.next = 2;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.e("Tag Name is required"));
+
+              case 2:
+                _context.next = 4;
+                return _this.callApi("post", "app/create_tag", _this.data);
+
+              case 4:
+                res = _context.sent;
+
+                if (res.status === 201) {
+                  _this.tags.unshift(res.data);
+
+                  _this.s("Tag has been added successfully!");
+
+                  _this.addModal = false;
+                } else {
+                  _this.swr();
+                }
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
       var res;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
         while (1) {
-          switch (_context.prev = _context.next) {
+          switch (_context2.prev = _context2.next) {
             case 0:
-              _context.next = 2;
-              return _this.callApi('post', '/app/create_tag', {
-                tagName: 'testtag'
-              });
+              _context2.next = 2;
+              return _this2.callApi("get", "app/get_tags");
 
             case 2:
-              res = _context.sent;
-              console.log(res);
+              res = _context2.sent;
 
               if (res.status == 200) {
-                console.log(res);
+                _this2.tags = res.data;
+              } else {
+                _this2.swr();
               }
 
-            case 5:
+            case 4:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
         }
-      }, _callee);
+      }, _callee2);
     }))();
   }
 });
@@ -85483,65 +85564,148 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "content" }, [
-      _c("div", { staticClass: "container-fluid" }, [
-        _c(
-          "div",
-          {
-            staticClass:
-              "_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20"
-          },
-          [
-            _c(
-              "p",
-              { staticClass: "_title0" },
-              [
-                _vm._v("Tags "),
-                _c(
-                  "Button",
-                  [
-                    _c("Icon", { attrs: { type: "md-add" } }),
-                    _vm._v(" Add Tag")
-                  ],
-                  1
-                )
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "_overflow _table_div" }, [
-              _c("table", { staticClass: "_table" }, [
-                _vm._m(0),
-                _vm._v(" "),
-                _c("tr", [
-                  _c("td", [_vm._v("25-05-19")]),
-                  _vm._v(" "),
-                  _c("td", { staticClass: "_table_name" }, [
-                    _vm._v('Manhattan\'s art center "Shed" opening ceremony')
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v("Economy")]),
-                  _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "container-fluid" },
+        [
+          _c(
+            "div",
+            {
+              staticClass:
+                "_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20"
+            },
+            [
+              _c(
+                "p",
+                { staticClass: "_title0" },
+                [
+                  _vm._v("\n                    Tags\n                    "),
                   _c(
-                    "td",
+                    "Button",
+                    {
+                      on: {
+                        click: function($event) {
+                          _vm.addModal = true
+                        }
+                      }
+                    },
                     [
-                      _c("Button", { attrs: { type: "info", size: "small" } }, [
-                        _vm._v("Edit")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "Button",
-                        { attrs: { type: "error", size: "small" } },
-                        [_vm._v("Delete")]
-                      )
+                      _c("Icon", { attrs: { type: "md-add" } }),
+                      _vm._v(" Add Tag")
                     ],
                     1
                   )
-                ])
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "_overflow _table_div" }, [
+                _c(
+                  "table",
+                  { staticClass: "_table" },
+                  [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _vm._l(_vm.tags, function(tag, i) {
+                      return _vm.tags.length
+                        ? _c("tr", { key: i }, [
+                            _c("td", [_vm._v(_vm._s(tag.id))]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "_table_name" }, [
+                              _vm._v(_vm._s(tag.tagName))
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(tag.created_at))]),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              [
+                                _c(
+                                  "Button",
+                                  { attrs: { type: "info", size: "small" } },
+                                  [_vm._v("Edit")]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "Button",
+                                  { attrs: { type: "error", size: "small" } },
+                                  [_vm._v("Delete")]
+                                )
+                              ],
+                              1
+                            )
+                          ])
+                        : _vm._e()
+                    })
+                  ],
+                  2
+                )
               ])
-            ])
-          ]
-        )
-      ])
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "Modal",
+            {
+              attrs: { title: "Add Modal", "mask-closable": false },
+              model: {
+                value: _vm.addModal,
+                callback: function($$v) {
+                  _vm.addModal = $$v
+                },
+                expression: "addModal"
+              }
+            },
+            [
+              _c("Input", {
+                attrs: { placeholder: "Add tag Name" },
+                model: {
+                  value: _vm.data.tagName,
+                  callback: function($$v) {
+                    _vm.$set(_vm.data, "tagName", $$v)
+                  },
+                  expression: "data.tagName"
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                { attrs: { slot: "footer" }, slot: "footer" },
+                [
+                  _c(
+                    "Button",
+                    {
+                      attrs: { type: "default" },
+                      on: {
+                        click: function($event) {
+                          _vm.addModal = false
+                        }
+                      }
+                    },
+                    [_vm._v("Close")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "Button",
+                    {
+                      attrs: {
+                        type: "primary",
+                        disabled: _vm.isAdding,
+                        loading: _vm.isAdding
+                      },
+                      on: { click: _vm.addTag }
+                    },
+                    [_vm._v(_vm._s(_vm.isAdding ? "Adding..." : "Add Tag"))]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
     ])
   ])
 }
@@ -100992,6 +101156,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee, null, [[0, 6]]);
       }))();
+    },
+    i: function i(desc) {
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Hey';
+      this.$Notice.info({
+        title: title,
+        desc: desc
+      });
+    },
+    s: function s(desc) {
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Great!';
+      this.$Notice.success({
+        title: title,
+        desc: desc
+      });
+    },
+    w: function w(desc) {
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Oops';
+      this.$Notice.warning({
+        title: title,
+        desc: desc
+      });
+    },
+    e: function e(desc) {
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Error';
+      this.$Notice.error({
+        title: title,
+        desc: desc
+      });
+    },
+    swr: function swr() {
+      var desc = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Something went wrong, Please try again';
+      var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Wrong';
+      this.$Notice.error({
+        title: title,
+        desc: desc
+      });
     }
   }
 });
