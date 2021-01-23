@@ -42,7 +42,11 @@
                                         @click="showEditModal(tag, i)"
                                         >Edit</Button
                                     >
-                                    <Button type="error" size="small"
+                                    <Button
+                                        type="error"
+                                        size="small"
+                                        @click="showDeletingModal(tag, i)"
+                                        :loading="tag.isDeleting"
                                         >Delete</Button
                                     >
                                 </td>
@@ -94,6 +98,27 @@
                         >
                     </div>
                 </Modal>
+                <!---------Eliminar tag------>
+                <Modal v-model="showDeleteModal" width="360">
+                    <p slot="header" style="color:#f60;text-align:center">
+                        <Icon type="ios-information-circle"></Icon>
+                        <span>Delete confirmation</span>
+                    </p>
+                    <div style="text-align:center">
+                        <p>Are you sure you want to delete tag?</p>
+                    </div>
+                    <div slot="footer">
+                        <Button
+                            type="error"
+                            size="large"
+                            :disabled="isDeleting"
+                            long
+                            :loading="isDeleting"
+                            @click="deleteTag"
+                            >Delete</Button
+                        >
+                    </div>
+                </Modal>
             </div>
         </div>
     </div>
@@ -109,10 +134,15 @@ export default {
                 tagName: ""
             },
             addModal: false,
+            idDeleting: false,
             editModal: false,
             isAdding: false,
             tags: [],
-            index:-1
+            index: -1,
+            showDeleteModal: false,
+            isDeleting: false,
+            deleteItem: {},
+            deletingIndex: -1
         };
     },
     methods: {
@@ -147,7 +177,7 @@ export default {
                 this.editData
             );
             if (res.status === 200) {
-                this.tags[this.index].tagName=this.editData.tagName;
+                this.tags[this.index].tagName = this.editData.tagName;
                 this.s("Tag has been edited successfully!");
                 this.editModal = false;
             } else {
@@ -161,13 +191,35 @@ export default {
             }
         },
         showEditModal(tag, index) {
-            let obj ={
-                id:tag.id,
-                tagName:tag.tagName
-            }
+            let obj = {
+                id: tag.id,
+                tagName: tag.tagName
+            };
             this.editData = obj;
             this.editModal = true;
-            this.index=index
+            this.index = index;
+        },
+        async deleteTag() {
+            this.isDeleting = true;
+            //  this.$set(tag, "isDeleting", true);
+            const res = await this.callApi(
+                "post",
+                "app/delete_tag",
+                this.deleteItem
+            );
+            if (res.status == 200) {
+                this.tags.splice(this.deletingIndex, 1);
+                this.s("Tag has been deleted succesfully");
+            } else {
+                this.swr();
+            }
+            this.isDeleting = false;
+            this.showDeleteModal = false;
+        },
+        showDeletingModal(tag, i) {
+            this.deleteItem = tag;
+            this.deletingIndex = i;
+            this.showDeleteModal = true;
         }
     },
 
