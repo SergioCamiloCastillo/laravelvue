@@ -20,20 +20,21 @@
                         <ul class="_1side_menu_list_ul">
                             <li>
                                 <router-link to="/"
-                                    ><Icon type="ios-speedometer" />
+                                    >
+                                    <Icon type="ios-home" />
                                     Dashboard</router-link
                                 >
                             </li>
 
                             <li>
                                 <router-link to="tags"
-                                    ><Icon type="ios-speedometer" />
+                                    ><Icon type="ios-bookmark" />
                                     Tags</router-link
                                 >
                             </li>
                             <li>
                                 <router-link to="category"
-                                    ><Icon type="ios-speedometer" />
+                                    ><Icon type="ios-list-box-outline" />
                                     Category</router-link
                                 >
                             </li>
