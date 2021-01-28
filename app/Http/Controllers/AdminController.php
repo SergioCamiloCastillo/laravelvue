@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Tag;
 use Illuminate\Http\Request;
 
@@ -15,10 +16,11 @@ class AdminController extends Controller
             'tagName' => $request->tagName
         ]);
     }
-    public function getTag(){
-        return Tag::orderBy('id','desc')->get();
+    public function getTag()
+    {
+        return Tag::orderBy('id', 'desc')->get();
     }
-   
+
     public function editTag(Request $request)
     {
         // validate request
@@ -38,9 +40,13 @@ class AdminController extends Controller
         ]);
         return Tag::where('id', $request->id)->delete();
     }
-    public function upload(Request $request){
-         $picName=time().'.'.$request->file->extension();
-         $request->file->move(public_path('uploads'),$picName);
-         return $picName;
+    public function upload(Request $request)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:jpeg,jpg,png'
+        ]);
+        $picName = time() . '.' . $request->file->extension();
+        $request->file->move(public_path('uploads'), $picName);
+        return $picName;
     }
 }
