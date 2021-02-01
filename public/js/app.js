@@ -2084,6 +2084,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2092,13 +2101,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         categoryName: ""
       },
       editData: {
-        tagName: ""
+        categoryName: ""
       },
       addModal: false,
       idDeleting: false,
       editModal: false,
       isAdding: false,
-      tags: [],
+      categories: [],
       index: -1,
       showDeleteModal: false,
       isDeleting: false,
@@ -2108,7 +2117,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
-    addTag: function addTag() {
+    addCategory: function addCategory() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
@@ -2117,40 +2126,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!(_this.data.tagName.trim() == "")) {
+                if (!(_this.data.categoryName.trim() == "")) {
                   _context.next = 2;
                   break;
                 }
 
-                return _context.abrupt("return", _this.e("Tag Name is required"));
+                return _context.abrupt("return", _this.e("Category Name is required"));
 
               case 2:
-                _context.next = 4;
-                return _this.callApi("post", "app/create_tag", _this.data);
+                if (!(_this.data.iconImage.trim() == "")) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.e("Icon Image is required"));
 
               case 4:
+                _context.next = 6;
+                return _this.callApi("post", "app/create_category", _this.data);
+
+              case 6:
                 res = _context.sent;
 
                 if (res.status === 201) {
-                  _this.tags.unshift(res.data);
+                  _this.categories.unshift(res.data);
 
-                  _this.s("Tag has been added successfully!");
+                  _this.s("Category has been added successfully!");
 
                   _this.addModal = false;
-                  _this.data.tagName = "";
+                  _this.data.categoryName = "";
+                  _this.data.iconImage = "";
                 } else {
                   if (res.status == 422) {
-                    if (res.data.errors.tagName) {
-                      _this.e(res.data.errors.tagName);
+                    if (res.data.errors.categoryName) {
+                      _this.e(res.data.errors.categoryName[0]);
+                    }
+
+                    if (res.data.errors.iconImage) {
+                      _this.e(res.data.errors.iconImage[0]);
                     }
                   } else {
                     _this.swr();
                   }
 
-                  _this.data.tagName = "";
+                  _this.data.categoryName = "";
                 }
 
-              case 6:
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -2158,46 +2180,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    editTag: function editTag() {
+    deleteImage: function deleteImage() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var res;
+        var image, res;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(_this2.editData.tagName.trim() == "")) {
-                  _context2.next = 2;
-                  break;
-                }
+                image = _this2.data.iconImage;
 
-                return _context2.abrupt("return", _this2.e("Tag name is required"));
+                _this2.$refs.uploads.clearFiles();
 
-              case 2:
-                _context2.next = 4;
-                return _this2.callApi("post", "app/edit_tag", _this2.editData);
+                _this2.data.iconImage = "";
+                _context2.next = 5;
+                return _this2.callApi("post", "app/delete_image", {
+                  imageName: image
+                });
 
-              case 4:
+              case 5:
                 res = _context2.sent;
 
-                if (res.status === 200) {
-                  _this2.tags[_this2.index].tagName = _this2.editData.tagName;
+                if (res.status != 200) {
+                  _this2.data.iconImage = image;
 
-                  _this2.s("Tag has been edited successfully!");
-
-                  _this2.editModal = false;
-                } else {
-                  if (res.status == 422) {
-                    if (res.data.errors.tagName) {
-                      _this2.e(res.data.errors.tagName[0]);
-                    }
-                  } else {
-                    _this2.swr();
-                  }
+                  _this2.swr();
                 }
 
-              case 6:
+              case 7:
               case "end":
                 return _context2.stop();
             }
@@ -2205,7 +2216,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    deleteTag: function deleteTag() {
+    editCategory: function editCategory() {
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
@@ -2214,26 +2225,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _this3.isDeleting = true; //  this.$set(tag, "isDeleting", true);
-
-                _context3.next = 3;
-                return _this3.callApi("post", "app/delete_tag", _this3.deleteItem);
-
-              case 3:
-                res = _context3.sent;
-
-                if (res.status == 200) {
-                  _this3.tags.splice(_this3.deletingIndex, 1);
-
-                  _this3.s("Tag has been deleted succesfully");
-                } else {
-                  _this3.swr();
+                if (!(_this3.editData.categoryName.trim() == "")) {
+                  _context3.next = 2;
+                  break;
                 }
 
-                _this3.isDeleting = false;
-                _this3.showDeleteModal = false;
+                return _context3.abrupt("return", _this3.e("Category name is required"));
 
-              case 7:
+              case 2:
+                _context3.next = 4;
+                return _this3.callApi("post", "app/edit_category", _this3.editData);
+
+              case 4:
+                res = _context3.sent;
+
+                if (res.status === 200) {
+                  _this3.categories[_this3.index].categoryName = _this3.editData.categoryName;
+
+                  _this3.s("Category has been edited successfully!");
+
+                  _this3.editModal = false;
+                } else {
+                  if (res.status == 422) {
+                    if (res.data.errors.categoryName) {
+                      _this3.e(res.data.errors.categoryName[0]);
+                    }
+                  } else {
+                    _this3.swr();
+                  }
+                }
+
+              case 6:
               case "end":
                 return _context3.stop();
             }
@@ -2241,15 +2263,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
-    showDeletingModal: function showDeletingModal(tag, i) {
-      this.deleteItem = tag;
+    deleteCategory: function deleteCategory() {
+      var _this4 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+        var res;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _this4.isDeleting = true; //  this.$set(category, "isDeleting", true);
+
+                _context4.next = 3;
+                return _this4.callApi("post", "app/delete_category", _this4.deleteItem);
+
+              case 3:
+                res = _context4.sent;
+
+                if (res.status == 200) {
+                  _this4.categories.splice(_this4.deletingIndex, 1);
+
+                  _this4.s("Category has been deleted succesfully");
+                } else {
+                  _this4.swr();
+                }
+
+                _this4.isDeleting = false;
+                _this4.showDeleteModal = false;
+
+              case 7:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
+    },
+    showDeletingModal: function showDeletingModal(category, i) {
+      this.deleteItem = category;
       this.deletingIndex = i;
       this.showDeleteModal = true;
     },
-    showEditModal: function showEditModal(tag, index) {
+    showEditModal: function showEditModal(category, index) {
       var obj = {
-        id: tag.id,
-        tagName: tag.tagName
+        id: category.id,
+        categoryName: category.categoryName
       };
       this.editData = obj;
       this.editModal = true;
@@ -2278,33 +2336,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   created: function created() {
-    var _this4 = this;
+    var _this5 = this;
 
-    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
       var res;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
-              _this4.token = window.Laravel.csrfToken;
-              _context4.next = 3;
-              return _this4.callApi("get", "app/get_tags");
+              _this5.token = window.Laravel.csrfToken;
+              _context5.next = 3;
+              return _this5.callApi("get", "app/get_categories");
 
             case 3:
-              res = _context4.sent;
+              res = _context5.sent;
 
               if (res.status == 200) {
-                _this4.tags = res.data;
+                _this5.categories = res.data;
               } else {
-                _this4.swr();
+                _this5.swr();
               }
 
             case 5:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
-      }, _callee4);
+      }, _callee5);
     }))();
   }
 });
@@ -2508,7 +2566,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 } else {
                   if (res.status == 422) {
                     if (res.data.errors.tagName) {
-                      _this.e(res.data.errors.tagName);
+                      _this.e(res.data.errors.tagName[0]);
                     }
                   } else {
                     _this.swr();
@@ -85504,16 +85562,16 @@ var render = function() {
                   [
                     _vm._m(0),
                     _vm._v(" "),
-                    _vm._l(_vm.tags, function(tag, i) {
-                      return _vm.tags.length
+                    _vm._l(_vm.categories, function(category, i) {
+                      return _vm.categories.length
                         ? _c("tr", { key: i }, [
-                            _c("td", [_vm._v(_vm._s(tag.id))]),
+                            _c("td", [_vm._v(_vm._s(category.id))]),
                             _vm._v(" "),
                             _c("td", { staticClass: "_table_name" }, [
-                              _vm._v(_vm._s(tag.tagName))
+                              _vm._v(_vm._s(category.categoryName))
                             ]),
                             _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(tag.created_at))]),
+                            _c("td", [_vm._v(_vm._s(category.created_at))]),
                             _vm._v(" "),
                             _c(
                               "td",
@@ -85524,7 +85582,7 @@ var render = function() {
                                     attrs: { type: "info", size: "small" },
                                     on: {
                                       click: function($event) {
-                                        return _vm.showEditModal(tag, i)
+                                        return _vm.showEditModal(category, i)
                                       }
                                     }
                                   },
@@ -85537,11 +85595,14 @@ var render = function() {
                                     attrs: {
                                       type: "error",
                                       size: "small",
-                                      loading: tag.isDeleting
+                                      loading: category.isDeleting
                                     },
                                     on: {
                                       click: function($event) {
-                                        return _vm.showDeletingModal(tag, i)
+                                        return _vm.showDeletingModal(
+                                          category,
+                                          i
+                                        )
                                       }
                                     }
                                   },
@@ -85563,7 +85624,7 @@ var render = function() {
           _c(
             "Modal",
             {
-              attrs: { title: "Add Tag", "mask-closable": false },
+              attrs: { title: "Add Category", "mask-closable": false },
               model: {
                 value: _vm.addModal,
                 callback: function($$v) {
@@ -85576,11 +85637,11 @@ var render = function() {
               _c("Input", {
                 attrs: { placeholder: "Add Category Name" },
                 model: {
-                  value: _vm.data.tagName,
+                  value: _vm.data.categoryName,
                   callback: function($$v) {
-                    _vm.$set(_vm.data, "tagName", $$v)
+                    _vm.$set(_vm.data, "categoryName", $$v)
                   },
-                  expression: "data.tagName"
+                  expression: "data.categoryName"
                 }
               }),
               _vm._v(" "),
@@ -85589,6 +85650,7 @@ var render = function() {
               _c(
                 "Upload",
                 {
+                  ref: "uploads",
                   attrs: {
                     multiple: "",
                     type: "drag",
@@ -85623,10 +85685,22 @@ var render = function() {
               ),
               _vm._v(" "),
               _vm.data.iconImage
-                ? _c("div", { staticClass: "image_thumb" }, [
+                ? _c("div", { staticClass: "demo-upload-list" }, [
                     _c("img", {
                       attrs: { src: "/uploads/" + _vm.data.iconImage }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "demo-upload-list-cover" },
+                      [
+                        _c("Icon", {
+                          attrs: { type: "ios-trash-outline" },
+                          on: { click: _vm.deleteImage }
+                        })
+                      ],
+                      1
+                    )
                   ])
                 : _vm._e(),
               _vm._v(" "),
@@ -85655,9 +85729,13 @@ var render = function() {
                         disabled: _vm.isAdding,
                         loading: _vm.isAdding
                       },
-                      on: { click: _vm.addTag }
+                      on: { click: _vm.addCategory }
                     },
-                    [_vm._v(_vm._s(_vm.isAdding ? "Adding..." : "Add Tag"))]
+                    [
+                      _vm._v(
+                        _vm._s(_vm.isAdding ? "Adding..." : "Add Category")
+                      )
+                    ]
                   )
                 ],
                 1
@@ -85669,7 +85747,7 @@ var render = function() {
           _c(
             "Modal",
             {
-              attrs: { title: "Edit Tag", "mask-closable": false },
+              attrs: { title: "Edit Category", "mask-closable": false },
               model: {
                 value: _vm.editModal,
                 callback: function($$v) {
@@ -85680,13 +85758,13 @@ var render = function() {
             },
             [
               _c("Input", {
-                attrs: { placeholder: "Edit tag Name" },
+                attrs: { placeholder: "Edit Category Name" },
                 model: {
-                  value: _vm.editData.tagName,
+                  value: _vm.editData.categoryName,
                   callback: function($$v) {
-                    _vm.$set(_vm.editData, "tagName", $$v)
+                    _vm.$set(_vm.editData, "categoryName", $$v)
                   },
-                  expression: "editData.tagName"
+                  expression: "editData.categoryName"
                 }
               }),
               _vm._v(" "),
@@ -85715,9 +85793,13 @@ var render = function() {
                         disabled: _vm.isAdding,
                         loading: _vm.isAdding
                       },
-                      on: { click: _vm.editTag }
+                      on: { click: _vm.editCategory }
                     },
-                    [_vm._v(_vm._s(_vm.isAdding ? "Editing..." : "Edit Tag"))]
+                    [
+                      _vm._v(
+                        _vm._s(_vm.isAdding ? "Editing..." : "Edit Category")
+                      )
+                    ]
                   )
                 ],
                 1
@@ -85755,7 +85837,7 @@ var render = function() {
               ),
               _vm._v(" "),
               _c("div", { staticStyle: { "text-align": "center" } }, [
-                _c("p", [_vm._v("Are you sure you want to delete tag?")])
+                _c("p", [_vm._v("Are you sure you want to delete category?")])
               ]),
               _vm._v(" "),
               _c(
@@ -85772,7 +85854,7 @@ var render = function() {
                         long: "",
                         loading: _vm.isDeleting
                       },
-                      on: { click: _vm.deleteTag }
+                      on: { click: _vm.deleteCategory }
                     },
                     [_vm._v("Delete")]
                   )
@@ -85795,7 +85877,7 @@ var staticRenderFns = [
     return _c("tr", [
       _c("th", [_vm._v("ID")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Tag Name")]),
+      _c("th", [_vm._v("Category Name")]),
       _vm._v(" "),
       _c("th", [_vm._v("Created At")]),
       _vm._v(" "),

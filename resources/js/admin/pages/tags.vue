@@ -159,7 +159,7 @@ export default {
             } else {
                 if (res.status == 422) {
                     if (res.data.errors.tagName) {
-                        this.e(res.data.errors.tagName);
+                        this.e(res.data.errors.tagName[0]);
                     }
                 } else {
                     this.swr();

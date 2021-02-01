@@ -18,7 +18,7 @@
                             <!-- TABLE TITLE -->
                             <tr>
                                 <th>ID</th>
-                                <th>Tag Name</th>
+                                <th>Category Name</th>
                                 <th>Created At</th>
                                 <th>Action</th>
                             </tr>
@@ -28,25 +28,25 @@
 
                             <!-- ITEMS -->
                             <tr
-                                v-for="(tag, i) in tags"
+                                v-for="(category, i) in categories"
                                 :key="i"
-                                v-if="tags.length"
+                                v-if="categories.length"
                             >
-                                <td>{{ tag.id }}</td>
-                                <td class="_table_name">{{ tag.tagName }}</td>
-                                <td>{{ tag.created_at }}</td>
+                                <td>{{ category.id }}</td>
+                                <td class="_table_name">{{ category.categoryName }}</td>
+                                <td>{{ category.created_at }}</td>
                                 <td>
                                     <Button
                                         type="info"
                                         size="small"
-                                        @click="showEditModal(tag, i)"
+                                        @click="showEditModal(category, i)"
                                         >Edit</Button
                                     >
                                     <Button
                                         type="error"
                                         size="small"
-                                        @click="showDeletingModal(tag, i)"
-                                        :loading="tag.isDeleting"
+                                        @click="showDeletingModal(category, i)"
+                                        :loading="category.isDeleting"
                                         >Delete</Button
                                     >
                                 </td>
@@ -55,20 +55,21 @@
                         </table>
                     </div>
                 </div>
-                <!-----Tag Adding modal --->
+                <!-----Category Adding modal --->
                 <Modal
                     v-model="addModal"
-                    title="Add Tag"
+                    title="Add Category"
                     :mask-closable="false"
                 >
                     <Input
-                        v-model="data.tagName"
+                        v-model="data.categoryName"
                         placeholder="Add Category Name"
                     />
                     <div class="space"></div>
                     <Upload
                         multiple
                         type="drag"
+                        ref="uploads"
                         :headers="{
                             'x-csrf-token': token,
                             'X-Requested-With': 'XMLHttpRequest'
@@ -90,8 +91,14 @@
                             <p>Click or drag files here to upload</p>
                         </div>
                     </Upload>
-                    <div class="image_thumb" v-if="data.iconImage">
+                    <div class="demo-upload-list" v-if="data.iconImage">
                         <img :src="`/uploads/${data.iconImage}`" />
+                        <div class="demo-upload-list-cover">
+                            <Icon
+                                type="ios-trash-outline"
+                                @click="deleteImage"
+                            ></Icon>
+                        </div>
                     </div>
                     <div slot="footer">
                         <Button type="default" @click="addModal = false"
@@ -99,22 +106,24 @@
                         >
                         <Button
                             type="primary"
-                            @click="addTag"
+                            @click="addCategory"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Adding..." : "Add Tag" }}</Button
+                            >{{
+                                isAdding ? "Adding..." : "Add Category"
+                            }}</Button
                         >
                     </div>
                 </Modal>
-                <!-------edit tag-------->
+                <!-------edit category-------->
                 <Modal
                     v-model="editModal"
-                    title="Edit Tag"
+                    title="Edit Category"
                     :mask-closable="false"
                 >
                     <Input
-                        v-model="editData.tagName"
-                        placeholder="Edit tag Name"
+                        v-model="editData.categoryName"
+                        placeholder="Edit Category Name"
                     />
                     <div slot="footer">
                         <Button type="default" @click="editModal = false"
@@ -122,21 +131,21 @@
                         >
                         <Button
                             type="primary"
-                            @click="editTag"
+                            @click="editCategory"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Editing..." : "Edit Tag" }}</Button
+                            >{{ isAdding ? "Editing..." : "Edit Category" }}</Button
                         >
                     </div>
                 </Modal>
-                <!---------Eliminar tag------>
+                <!---------Eliminar category------>
                 <Modal v-model="showDeleteModal" width="360">
                     <p slot="header" style="color:#f60;text-align:center">
                         <Icon type="ios-information-circle"></Icon>
                         <span>Delete confirmation</span>
                     </p>
                     <div style="text-align:center">
-                        <p>Are you sure you want to delete tag?</p>
+                        <p>Are you sure you want to delete category?</p>
                     </div>
                     <div slot="footer">
                         <Button
@@ -145,7 +154,7 @@
                             :disabled="isDeleting"
                             long
                             :loading="isDeleting"
-                            @click="deleteTag"
+                            @click="deleteCategory"
                             >Delete</Button
                         >
                     </div>
@@ -163,13 +172,13 @@ export default {
                 categoryName: ""
             },
             editData: {
-                tagName: ""
+                categoryName: ""
             },
             addModal: false,
             idDeleting: false,
             editModal: false,
             isAdding: false,
-            tags: [],
+            categories: [],
             index: -1,
             showDeleteModal: false,
             isDeleting: false,
@@ -179,44 +188,65 @@ export default {
         };
     },
     methods: {
-        async addTag() {
-            if (this.data.tagName.trim() == "")
-                return this.e("Tag Name is required");
-            const res = await this.callApi("post", "app/create_tag", this.data);
-            if (res.status === 201) {
-                this.tags.unshift(res.data);
+        async addCategory() {
+            if (this.data.categoryName.trim() == "") return this.e("Category Name is required");
 
-                this.s("Tag has been added successfully!");
+            if (this.data.iconImage.trim() == "") return this.e("Icon Image is required");
+
+            const res = await this.callApi(
+                "post",
+                "app/create_category",
+                this.data
+            );
+            if (res.status === 201) {
+                this.categories.unshift(res.data);
+
+                this.s("Category has been added successfully!");
                 this.addModal = false;
-                this.data.tagName = "";
+                this.data.categoryName = "";
+                this.data.iconImage = "";
             } else {
                 if (res.status == 422) {
-                    if (res.data.errors.tagName) {
-                        this.e(res.data.errors.tagName);
+                    if (res.data.errors.categoryName) {
+                        this.e(res.data.errors.categoryName[0]);
+                    }
+                    if (res.data.errors.iconImage) {
+                        this.e(res.data.errors.iconImage[0]);
                     }
                 } else {
                     this.swr();
                 }
-                this.data.tagName = "";
+                this.data.categoryName = "";
             }
         },
-
-        async editTag() {
-            if (this.editData.tagName.trim() == "")
-                return this.e("Tag name is required");
+        async deleteImage() {
+            let image = this.data.iconImage;
+            this.$refs.uploads.clearFiles();
+            this.data.iconImage = "";
+            const res = await this.callApi("post", "app/delete_image", {
+                imageName: image
+            });
+            if (res.status != 200) {
+                this.data.iconImage = image;
+                this.swr();
+            }
+        },
+        async editCategory() {
+            if (this.editData.categoryName.trim() == "")
+                return this.e("Category name is required");
             const res = await this.callApi(
                 "post",
-                "app/edit_tag",
+                "app/edit_category",
                 this.editData
             );
             if (res.status === 200) {
-                this.tags[this.index].tagName = this.editData.tagName;
-                this.s("Tag has been edited successfully!");
+                this.categories[this.index].categoryName = this.editData.categoryName;
+                this.s("Category has been edited successfully!");
                 this.editModal = false;
             } else {
                 if (res.status == 422) {
-                    if (res.data.errors.tagName) {
-                        this.e(res.data.errors.tagName[0]);
+                    if (res.data.errors.categoryName) {
+                        this.e(res.data.errors.categoryName[0]);
                     }
                 } else {
                     this.swr();
@@ -224,32 +254,32 @@ export default {
             }
         },
 
-        async deleteTag() {
+        async deleteCategory() {
             this.isDeleting = true;
-            //  this.$set(tag, "isDeleting", true);
+            //  this.$set(category, "isDeleting", true);
             const res = await this.callApi(
                 "post",
-                "app/delete_tag",
+                "app/delete_category",
                 this.deleteItem
             );
             if (res.status == 200) {
-                this.tags.splice(this.deletingIndex, 1);
-                this.s("Tag has been deleted succesfully");
+                this.categories.splice(this.deletingIndex, 1);
+                this.s("Category has been deleted succesfully");
             } else {
                 this.swr();
             }
             this.isDeleting = false;
             this.showDeleteModal = false;
         },
-        showDeletingModal(tag, i) {
-            this.deleteItem = tag;
+        showDeletingModal(category, i) {
+            this.deleteItem = category;
             this.deletingIndex = i;
             this.showDeleteModal = true;
         },
-        showEditModal(tag, index) {
+        showEditModal(category, index) {
             let obj = {
-                id: tag.id,
-                tagName: tag.tagName
+                id: category.id,
+                categoryName:category.categoryName
             };
             this.editData = obj;
             this.editModal = true;
@@ -288,9 +318,9 @@ export default {
 
     async created() {
         this.token = window.Laravel.csrfToken;
-        const res = await this.callApi("get", "app/get_tags");
+        const res = await this.callApi("get", "app/get_categories");
         if (res.status == 200) {
-            this.tags = res.data;
+            this.categories = res.data;
         } else {
             this.swr();
         }
