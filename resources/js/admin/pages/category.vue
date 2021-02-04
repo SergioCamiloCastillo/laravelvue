@@ -8,9 +8,9 @@
                 >
                     <p class="_title0">
                         Category
-                        <Button @click="addModal = true"
-                            ><Icon type="md-add"></Icon> Add Category</Button
-                        >
+                        <Button @click="addModal = true">
+                            <Icon type="md-add" />Add Category
+                        </Button>
                     </p>
 
                     <div class="_overflow _table_div">
@@ -18,22 +18,28 @@
                             <!-- TABLE TITLE -->
                             <tr>
                                 <th>ID</th>
-                                <th>Category Name</th>
-                                <th>Created At</th>
+                                <th>Icon image</th>
+                                <th>Category name</th>
+                                <th>Created at</th>
                                 <th>Action</th>
                             </tr>
                             <!-- TABLE TITLE -->
 
                             <!-- ITEMS -->
-
-                            <!-- ITEMS -->
                             <tr
-                                v-for="(category, i) in categories"
+                                v-for="(category, i) in categoryLists"
                                 :key="i"
-                                v-if="categories.length"
+                                v-if="categoryLists.length"
                             >
                                 <td>{{ category.id }}</td>
-                                <td class="_table_name">{{ category.categoryName }}</td>
+                                <td class="table_image">
+                                    <img
+                                        :src="`/uploads/${category.iconImage}`"
+                                    />
+                                </td>
+                                <td class="_table_name">
+                                    {{ category.categoryName }}
+                                </td>
                                 <td>{{ category.created_at }}</td>
                                 <td>
                                     <Button
@@ -55,21 +61,22 @@
                         </table>
                     </div>
                 </div>
-                <!-----Category Adding modal --->
+
+                <!-- tag adding modal -->
                 <Modal
                     v-model="addModal"
-                    title="Add Category"
+                    title="Add category"
                     :mask-closable="false"
+                    :closable="false"
                 >
                     <Input
                         v-model="data.categoryName"
-                        placeholder="Add Category Name"
+                        placeholder="Add category name"
                     />
                     <div class="space"></div>
                     <Upload
-                        multiple
-                        type="drag"
                         ref="uploads"
+                        type="drag"
                         :headers="{
                             'x-csrf-token': token,
                             'X-Requested-With': 'XMLHttpRequest'
@@ -77,8 +84,8 @@
                         :on-success="handleSuccess"
                         :on-error="handleError"
                         :format="['jpg', 'jpeg', 'png']"
-                        :on-format-error="handleFormatError"
                         :max-size="2048"
+                        :on-format-error="handleFormatError"
                         :on-exceeded-size="handleMaxSize"
                         action="/app/upload"
                     >
@@ -100,6 +107,7 @@
                             ></Icon>
                         </div>
                     </div>
+
                     <div slot="footer">
                         <Button type="default" @click="addModal = false"
                             >Close</Button
@@ -110,23 +118,60 @@
                             :disabled="isAdding"
                             :loading="isAdding"
                             >{{
-                                isAdding ? "Adding..." : "Add Category"
+                                isAdding ? "Adding.." : "Add Category"
                             }}</Button
                         >
                     </div>
                 </Modal>
-                <!-------edit category-------->
+                <!-- tag editing modal -->
                 <Modal
                     v-model="editModal"
-                    title="Edit Category"
+                    title="Edit category"
                     :mask-closable="false"
+                    :closable="false"
                 >
                     <Input
                         v-model="editData.categoryName"
-                        placeholder="Edit Category Name"
+                        placeholder="Add category name"
                     />
+                    <div class="space"></div>
+                    <Upload
+                        v-show="isIconImageNew"
+                        ref="editDataUploads"
+                        type="drag"
+                        :headers="{
+                            'x-csrf-token': token,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }"
+                        :on-success="handleSuccess"
+                        :on-error="handleError"
+                        :format="['jpg', 'jpeg', 'png']"
+                        :max-size="2048"
+                        :on-format-error="handleFormatError"
+                        :on-exceeded-size="handleMaxSize"
+                        action="/app/upload"
+                    >
+                        <div style="padding: 20px 0">
+                            <Icon
+                                type="ios-cloud-upload"
+                                size="52"
+                                style="color: #3399ff"
+                            ></Icon>
+                            <p>Click or drag files here to upload</p>
+                        </div>
+                    </Upload>
+                    <div class="demo-upload-list" v-if="editData.iconImage">
+                        <img :src="`/uploads/${editData.iconImage}`" />
+                        <div class="demo-upload-list-cover">
+                            <Icon
+                                type="ios-trash-outline"
+                                @click="deleteImage(false)"
+                            ></Icon>
+                        </div>
+                    </div>
+
                     <div slot="footer">
-                        <Button type="default" @click="editModal = false"
+                        <Button type="default" @click="closeEditModal"
                             >Close</Button
                         >
                         <Button
@@ -134,28 +179,9 @@
                             @click="editCategory"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Editing..." : "Edit Category" }}</Button
-                        >
-                    </div>
-                </Modal>
-                <!---------Eliminar category------>
-                <Modal v-model="showDeleteModal" width="360">
-                    <p slot="header" style="color:#f60;text-align:center">
-                        <Icon type="ios-information-circle"></Icon>
-                        <span>Delete confirmation</span>
-                    </p>
-                    <div style="text-align:center">
-                        <p>Are you sure you want to delete category?</p>
-                    </div>
-                    <div slot="footer">
-                        <Button
-                            type="error"
-                            size="large"
-                            :disabled="isDeleting"
-                            long
-                            :loading="isDeleting"
-                            @click="deleteCategory"
-                            >Delete</Button
+                            >{{
+                                isAdding ? "Editing.." : "Edit Category"
+                            }}</Button
                         >
                     </div>
                 </Modal>
@@ -163,6 +189,7 @@
         </div>
     </div>
 </template>
+
 <script>
 export default {
     data() {
@@ -171,36 +198,40 @@ export default {
                 iconImage: "",
                 categoryName: ""
             },
-            editData: {
-                categoryName: ""
-            },
             addModal: false,
-            idDeleting: false,
             editModal: false,
             isAdding: false,
-            categories: [],
+            categoryLists: [],
+            editData: {
+                iconImage: "",
+                categoryName: ""
+            },
             index: -1,
             showDeleteModal: false,
-            isDeleting: false,
+            isDeleing: false,
             deleteItem: {},
             deletingIndex: -1,
-            token: ""
+            token: "",
+            isIconImageNew: false,
+            isEditingItem: false,
+            websiteSettings: []
         };
     },
     methods: {
         async addCategory() {
-            if (this.data.categoryName.trim() == "") return this.e("Category Name is required");
-
-            if (this.data.iconImage.trim() == "") return this.e("Icon Image is required");
-
+            if (this.data.categoryName.trim() == "")
+                return this.e("Category name is required");
+            if (this.data.iconImage.trim() == "")
+                return this.e("Icon image is required");
+            this.data.iconImage = `${this.data.iconImage}`;
             const res = await this.callApi(
                 "post",
                 "app/create_category",
                 this.data
             );
             if (res.status === 201) {
-                this.categories.unshift(res.data);
-
+                console.log(res.data);
+                this.categoryLists.unshift(res.data);
                 this.s("Category has been added successfully!");
                 this.addModal = false;
                 this.data.categoryName = "";
@@ -216,31 +247,23 @@ export default {
                 } else {
                     this.swr();
                 }
-                this.data.categoryName = "";
             }
-        },
-        async deleteImage() {
-            let image = this.data.iconImage;
             this.$refs.uploads.clearFiles();
-            this.data.iconImage = "";
-            const res = await this.callApi("post", "app/delete_image", {
-                imageName: image
-            });
-            if (res.status != 200) {
-                this.data.iconImage = image;
-                this.swr();
-            }
         },
         async editCategory() {
             if (this.editData.categoryName.trim() == "")
                 return this.e("Category name is required");
+            if (this.editData.iconImage.trim() == "")
+                return this.e("Icon image is required");
             const res = await this.callApi(
                 "post",
                 "app/edit_category",
                 this.editData
             );
             if (res.status === 200) {
-                this.categories[this.index].categoryName = this.editData.categoryName;
+                this.categoryLists[
+                    this.index
+                ].categoryName = this.editData.categoryName;
                 this.s("Category has been edited successfully!");
                 this.editModal = false;
             } else {
@@ -248,45 +271,44 @@ export default {
                     if (res.data.errors.categoryName) {
                         this.e(res.data.errors.categoryName[0]);
                     }
+                    if (res.data.errors.iconImage) {
+                        this.e(res.data.errors.iconImage[0]);
+                    }
                 } else {
                     this.swr();
                 }
             }
         },
-
-        async deleteCategory() {
-            this.isDeleting = true;
-            //  this.$set(category, "isDeleting", true);
-            const res = await this.callApi(
-                "post",
-                "app/delete_category",
-                this.deleteItem
-            );
-            if (res.status == 200) {
-                this.categories.splice(this.deletingIndex, 1);
-                this.s("Category has been deleted succesfully");
-            } else {
-                this.swr();
-            }
-            this.isDeleting = false;
-            this.showDeleteModal = false;
-        },
-        showDeletingModal(category, i) {
-            this.deleteItem = category;
-            this.deletingIndex = i;
-            this.showDeleteModal = true;
-        },
         showEditModal(category, index) {
-            let obj = {
-                id: category.id,
-                categoryName:category.categoryName
-            };
-            this.editData = obj;
+            // let obj = {
+            // 	id : tag.id,
+            // 	tagName : tag.tagName
+            // }
+            console.log(category);
+            this.editData = category;
             this.editModal = true;
             this.index = index;
+            this.isEditingItem = true;
         },
-
+        showDeletingModal(category, i) {
+            const deleteModalObj = {
+                showDeleteModal: true,
+                deleteUrl: "app/delete_category",
+                data: category,
+                deletingIndex: i,
+                isDeleted: false
+            };
+            this.$store.commit("setDeletingModalObj", deleteModalObj);
+            // this.deleteItem = tag
+            // this.deletingIndex = i
+            // this.showDeleteModal = true
+        },
         handleSuccess(res, file) {
+            if (this.isEditingItem) {
+                console.log("inside");
+                return (this.editData.iconImage = res);
+            }
+            console.log(res);
             this.data.iconImage = res;
         },
         handleError(res, file) {
@@ -295,7 +317,7 @@ export default {
                 desc: `${
                     file.errors.file.length
                         ? file.errors.file[0]
-                        : "Something went wrong"
+                        : "Something went wrong!"
                 }`
             });
         },
@@ -313,14 +335,38 @@ export default {
                 title: "Exceeding file size limit",
                 desc: "File  " + file.name + " is too large, no more than 2M."
             });
+        },
+        async deleteImage(isAdd = true) {
+            let image;
+            if (!isAdd) {
+                // for editing....
+                this.isIconImageNew = true;
+                image = this.editData.iconImage;
+                this.editData.iconImage = "";
+                this.$refs.editDataUploads.clearFiles();
+            } else {
+                image = this.data.iconImage;
+                this.data.iconImage = "";
+                this.$refs.uploads.clearFiles();
+            }
+            const res = await this.callApi("post", "app/delete_image", {
+                imageName: image
+            });
+            if (res.status != 200) {
+                this.data.iconImage = image;
+                this.swr();
+            }
+        },
+        closeEditModal() {
+            this.isEditingItem = false;
+            this.editModal = false;
         }
     },
-
     async created() {
         this.token = window.Laravel.csrfToken;
-        const res = await this.callApi("get", "app/get_categories");
+        const res = await this.callApi("get", "app/get_category");
         if (res.status == 200) {
-            this.categories = res.data;
+            this.categoryLists = res.data;
         } else {
             this.swr();
         }
