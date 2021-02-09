@@ -1,0 +1,52 @@
+
+<template>
+    <div>
+        <div class="content">
+			<div class="container-fluid">
+                    <h1>I will show how all other components react to changes</h1>
+                    <h2>The master component : {{this.$store.state.counter}}</h2>
+                <div>
+                    <comA></comA>
+                </div>
+                <div>
+                    <comB></comB>
+                </div>
+                <div>
+                    <comC></comC>
+                </div>
+                <Button type='info' @click='changeCounter'>Clic para cambiar state de counter</Button>
+              
+			</div>
+            
+        </div>
+       
+    </div>
+</template>
+<script>
+import comA from './comA'
+import comB from './comB'
+import comC from './comC'
+
+
+export default {
+    data(){
+        return {
+        }
+    },  
+    methods:{
+        changeCounter(){
+            this.$store.commit('changeTheCounter',1)
+        }
+    } ,
+    created(){
+        
+    }, 
+    components : {
+        comA,
+        comB, comC
+        
+    }, 
+   
+}
+</script>
+

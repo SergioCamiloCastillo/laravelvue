@@ -5,10 +5,15 @@ import Router from 'vue-router';
 import home from '../js/components/pages/home.vue'
 import tags from '../js/admin/pages/tags.vue'
 import category from '../js/admin/pages/category'
+import usecom from './vuex/usecom'
 
 
 Vue.use(Router);
 const routes =[
+    {
+        path:'/testvuex',
+        component: usecom
+    },
     {
         path:'/',
         component: home
