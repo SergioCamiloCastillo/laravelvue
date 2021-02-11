@@ -1,10 +1,9 @@
-
 <template>
     <div>
         <div class="content">
-			<div class="container-fluid">
-                    <h1>I will show how all other components react to changes</h1>
-                    <h2>The master component : {{this.$store.state.counter}}</h2>
+            <div class="container-fluid">
+                <h1>I will show how all other components react to changes</h1>
+                <h2>The master component : {{ counter }}</h2>
                 <div>
                     <comA></comA>
                 </div>
@@ -14,39 +13,43 @@
                 <div>
                     <comC></comC>
                 </div>
-                <Button type='info' @click='changeCounter'>Clic para cambiar state de counter</Button>
-              
-			</div>
-            
+                <Button type="info" @click="changeCounter"
+                    >Clic para cambiar state de counter</Button
+                >
+            </div>
         </div>
-       
     </div>
 </template>
 <script>
-import comA from './comA'
-import comB from './comB'
-import comC from './comC'
-
+import comA from "./comA";
+import comB from "./comB";
+import comC from "./comC";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
-    data(){
-        return {
+    data() {
+        return {};
+    },
+    computed: {
+        ...mapGetters({
+            counter: "getCounter"
+        })
+    },
+    methods: {
+        changeCounter() {
+            this.$store.dispatch("changeCounterAction", 1);
         }
-    },  
-    methods:{
-        changeCounter(){
-            this.$store.commit('changeTheCounter',1)
-        }
-    } ,
-    created(){
-        
-    }, 
-    components : {
+    },
+    created() {},
+    components: {
         comA,
-        comB, comC
-        
-    }, 
-   
-}
+        comB,
+        comC
+    },
+    watch: {
+        counter(value) {
+            console.log("counter is changing ", value);
+        }
+    }
+};
 </script>
-

@@ -185,12 +185,14 @@
                         >
                     </div>
                 </Modal>
+                <deleteModal></deleteModal>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import deleteModal from "../components/deleteModal.vue";
 export default {
     data() {
         return {
@@ -370,6 +372,9 @@ export default {
         } else {
             this.swr();
         }
+    },
+    components: {
+        deleteModal
     }
 };
 </script>

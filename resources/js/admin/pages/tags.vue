@@ -8,8 +8,8 @@
                 >
                     <p class="_title0">
                         Tags
-                        <Button @click="addModal = true"
-                            ><Icon type="md-add"></Icon> Add Tag</Button
+                        <Button @click="addModal = true" 
+                            ><Icon type="md-add" /> Add tag</Button
                         >
                     </p>
 
@@ -18,13 +18,11 @@
                             <!-- TABLE TITLE -->
                             <tr>
                                 <th>ID</th>
-                                <th>Tag Name</th>
-                                <th>Created At</th>
+                                <th>Tag name</th>
+                                <th>Created at</th>
                                 <th>Action</th>
                             </tr>
                             <!-- TABLE TITLE -->
-
-                            <!-- ITEMS -->
 
                             <!-- ITEMS -->
                             <tr
@@ -40,6 +38,7 @@
                                         type="info"
                                         size="small"
                                         @click="showEditModal(tag, i)"
+                                    
                                         >Edit</Button
                                     >
                                     <Button
@@ -55,13 +54,16 @@
                         </table>
                     </div>
                 </div>
-                <!-----Tag Adding modal --->
+
+                <!-- tag adding modal -->
                 <Modal
                     v-model="addModal"
-                    title="Add Tag"
+                    title="Add tag"
                     :mask-closable="false"
+                    :closable="false"
                 >
-                    <Input v-model="data.tagName" placeholder="Add tag Name" />
+                    <Input v-model="data.tagName" placeholder="Add tag name" />
+
                     <div slot="footer">
                         <Button type="default" @click="addModal = false"
                             >Close</Button
@@ -71,20 +73,22 @@
                             @click="addTag"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Adding..." : "Add Tag" }}</Button
+                            >{{ isAdding ? "Adding.." : "Add tag" }}</Button
                         >
                     </div>
                 </Modal>
-                <!-------edit tag-------->
+                <!-- tag editing modal -->
                 <Modal
                     v-model="editModal"
-                    title="Edit Tag"
+                    title="Edit tag"
                     :mask-closable="false"
+                    :closable="false"
                 >
                     <Input
                         v-model="editData.tagName"
-                        placeholder="Edit tag Name"
+                        placeholder="Edit tag name"
                     />
+
                     <div slot="footer">
                         <Button type="default" @click="editModal = false"
                             >Close</Button
@@ -94,65 +98,61 @@
                             @click="editTag"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Editing..." : "Edit Tag" }}</Button
+                            >{{ isAdding ? "Editing.." : "Edit tag" }}</Button
                         >
                     </div>
                 </Modal>
-                <!---------Eliminar tag------>
-                <Modal v-model="showDeleteModal" width="360">
-                    <p slot="header" style="color:#f60;text-align:center">
-                        <Icon type="ios-information-circle"></Icon>
-                        <span>Delete confirmation</span>
-                    </p>
-                    <div style="text-align:center">
-                        <p>Are you sure you want to delete tag?</p>
-                    </div>
-                    <div slot="footer">
-                        <Button
-                            type="error"
-                            size="large"
-                            :disabled="isDeleting"
-                            long
-                            :loading="isDeleting"
-                            @click="deleteTag"
-                            >Delete</Button
-                        >
-                    </div>
-                </Modal>
+                <!-- delete alert modal -->
+                <!-- <Modal v-model="showDeleteModal" width="360">
+					<p slot="header" style="color:#f60;text-align:center">
+						<Icon type="ios-information-circle"></Icon>
+						<span>Delete confirmation</span>
+					</p>
+					<div style="text-align:center">
+						<p>Are you sure you want to delete tag?.</p>
+						
+					</div>
+					<div slot="footer">
+						<Button type="error" size="large" long :loading="isDeleing" :disabled="isDeleing" @click="deleteTag" >Delete</Button>
+					</div>
+				</Modal> -->
+                <deleteModal></deleteModal>
             </div>
         </div>
     </div>
 </template>
+
 <script>
+import deleteModal from "../components/deleteModal.vue";
+import { mapGetters } from "vuex";
 export default {
     data() {
         return {
             data: {
                 tagName: ""
             },
-            editData: {
-                tagName: ""
-            },
             addModal: false,
-            idDeleting: false,
             editModal: false,
             isAdding: false,
             tags: [],
+            editData: {
+                tagName: ""
+            },
             index: -1,
             showDeleteModal: false,
-            isDeleting: false,
+            isDeleing: false,
             deleteItem: {},
-            deletingIndex: -1
+            deletingIndex: -1,
+            websiteSettings: []
         };
     },
     methods: {
         async addTag() {
             if (this.data.tagName.trim() == "")
-                return this.e("Tag Name is required");
+                return this.e("Tag name is required");
             const res = await this.callApi("post", "app/create_tag", this.data);
             if (res.status === 201) {
                 this.tags.unshift(res.data);
-
                 this.s("Tag has been added successfully!");
                 this.addModal = false;
                 this.data.tagName = "";
@@ -164,10 +164,8 @@ export default {
                 } else {
                     this.swr();
                 }
-                this.data.tagName = "";
             }
         },
-
         async editTag() {
             if (this.editData.tagName.trim() == "")
                 return this.e("Tag name is required");
@@ -200,35 +198,56 @@ export default {
             this.index = index;
         },
         async deleteTag() {
-            this.isDeleting = true;
-            //  this.$set(tag, "isDeleting", true);
+            this.isDeleing = true;
             const res = await this.callApi(
                 "post",
                 "app/delete_tag",
                 this.deleteItem
             );
-            if (res.status == 200) {
+            if (res.status === 200) {
                 this.tags.splice(this.deletingIndex, 1);
-                this.s("Tag has been deleted succesfully");
+                this.s("Tag has been deleted successfully!");
             } else {
                 this.swr();
             }
-            this.isDeleting = false;
+            this.isDeleing = false;
             this.showDeleteModal = false;
         },
         showDeletingModal(tag, i) {
-            this.deleteItem = tag;
-            this.deletingIndex = i;
-            this.showDeleteModal = true;
+            this.deletingIndex=i
+            const deleteModalObj = {
+                showDeleteModal: true,
+                deleteUrl: "app/delete_tag",
+                data: tag,
+                deletingIndex: i,
+                isDeleted: false
+            };
+            this.$store.commit("setDeletingModalObj", deleteModalObj);
+            console.log("delete method called");
+            // this.deleteItem = tag
+            // this.deletingIndex = i
+            // this.showDeleteModal = true
         }
     },
-
     async created() {
         const res = await this.callApi("get", "app/get_tags");
         if (res.status == 200) {
             this.tags = res.data;
         } else {
             this.swr();
+        }
+    },
+    components: {
+        deleteModal
+    },
+    computed: {
+        ...mapGetters(["getDeleteModalObj"])
+    },
+    watch: {
+        getDeleteModalObj(obj) {
+            if (obj.isDeleted) {
+                this.tags.splice(this.deletingIndex, 1);
+            }
         }
     }
 };
