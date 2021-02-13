@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import usecom from './vuex/usecom'
 
 //ADMIN PAGES ROUTER
 import home from '../js/components/pages/home.vue'
 import tags from '../js/admin/pages/tags.vue'
 import category from '../js/admin/pages/category'
-import usecom from './vuex/usecom'
+import adminusers from '../js/admin/pages/adminusers'
+
 
 
 Vue.use(Router);
@@ -25,6 +27,10 @@ const routes =[
     {
         path:'/category',
         component:category
+    },
+    {
+        path:'/adminusers',
+        component:adminusers
     }
    
 ]

@@ -40,7 +40,7 @@
                             </li>
                             <li>
                                 <router-link to="adminusers"
-                                    ><Icon type="ios-speedometer" /> Admin
+                                    ><Icon type="md-people" /> Admin
                                     users</router-link
                                 >
                             </li>
