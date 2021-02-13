@@ -193,6 +193,7 @@
 
 <script>
 import deleteModal from "../components/deleteModal.vue";
+import { mapGetters } from "vuex";
 export default {
     data() {
         return {
@@ -293,6 +294,8 @@ export default {
             this.isEditingItem = true;
         },
         showDeletingModal(category, i) {
+                        this.deletingIndex=i
+
             const deleteModalObj = {
                 showDeleteModal: true,
                 deleteUrl: "app/delete_category",
@@ -375,6 +378,16 @@ export default {
     },
     components: {
         deleteModal
+    },
+    computed: {
+        ...mapGetters(["getDeleteModalObj"])
+    },
+    watch: {
+        getDeleteModalObj(obj) {
+            if (obj.isDeleted) {
+                this.categoryLists.splice(this.deletingIndex, 1);
+            }
+        }
     }
 };
 </script>
