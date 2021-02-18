@@ -82,7 +82,7 @@ class AdminController extends Controller
             'iconImage' => $request->iconImage
         ]);
     }
-    public function getCategory(Request $request)
+    public function getCategory()
     {
         return Category::orderBy('id', 'desc')->get();
     }
@@ -112,7 +112,7 @@ class AdminController extends Controller
     {
         $this->validate($request, [
             'fullName' => 'required',
-            'email' => 'bail:required|email',
+            'email' => 'bail:required|email|unique:users',
             'password' => 'required|min:6',
             'userType' => 'required'
         ]);
@@ -127,7 +127,27 @@ class AdminController extends Controller
     }
     public function getUser()
     {
-        return User::where('userType', '!=','User')->get();
+        return User::where('userType', '!=', 'User')->get();
     }
+    public function editUser(Request $request)
+    {
+        $this->validate($request, [
+            'fullName' => 'required',
+            'email' => "bail:required|email|unique:users,email, $request->id",
+            'password' => 'required|min:6',
+            'userType' => 'required'
+        ]);
+        $data = [
+            'fullName' => $request->fullName,
+            'email' => $request->email,
+            'userType' => $request->userType
+        ];
+        if ($request->password) {
+            $password = bcrypt($request->password);
+            $data['password'] = $password;
+        }
 
+        $user = User::where('id', $request->id)->update($data);
+        return $user;
+    }
 }

@@ -7,7 +7,7 @@
                     class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20"
                 >
                     <p class="_title0">
-                        Tags
+                        Users
                         <Button @click="addModal = true"
                             ><Icon type="md-add" /> Add admin</Button
                         >
@@ -114,14 +114,41 @@
                 <!-- tag editing modal -->
                 <Modal
                     v-model="editModal"
-                    title="Edit tag"
+                    title="Edit User"
                     :mask-closable="false"
                     :closable="false"
                 >
-                    <Input
-                        v-model="editData.tagName"
-                        placeholder="Edit tag name"
-                    />
+                    <div class="space">
+                        <Input
+                            type="text"
+                            v-model="editData.fullName"
+                            placeholder="Fullname"
+                        />
+                    </div>
+                    <div class="space">
+                        <Input
+                            type="email"
+                            v-model="editData.email"
+                            placeholder="Email"
+                        />
+                    </div>
+                    <div class="space">
+                        <Input
+                            type="password"
+                            v-model="editData.password"
+                            placeholder="Password"
+                        />
+                    </div>
+                    <div class="space">
+                        <Select
+                            v-model="editData.userType"
+                            style="width:200px"
+                            placeholder="Select user type"
+                        >
+                            <Option value="Admin">Admin</Option>
+                            <Option value="Editor">Editor</Option>
+                        </Select>
+                    </div>
 
                     <div slot="footer">
                         <Button type="default" @click="editModal = false"
@@ -129,10 +156,10 @@
                         >
                         <Button
                             type="primary"
-                            @click="editTag"
+                            @click="editUser"
                             :disabled="isAdding"
                             :loading="isAdding"
-                            >{{ isAdding ? "Editing.." : "Edit tag" }}</Button
+                            >{{ isAdding ? "Editing.." : "Edit User" }}</Button
                         >
                     </div>
                 </Modal>
@@ -173,7 +200,10 @@ export default {
             isAdding: false,
             users: [],
             editData: {
-                tagName: ""
+                fullName: "",
+                password: "",
+                email: "",
+                userType: ""
             },
             index: -1,
             showDeleteModal: false,
@@ -214,12 +244,18 @@ export default {
                 }
             }
         },
-        async editTag() {
-            if (this.editData.tagName.trim() == "")
-                return this.e("Tag name is required");
+        async editUser() {
+            if (this.editData.fullName.trim() == "")
+                return this.e("Fullname is required");
+            if (this.editData.email.trim() == "")
+                return this.e("Email is required");
+            if (this.editData.userType.trim() == "")
+                return this.e("User Type is required");
+            if (this.editData.password.trim() == "")
+                return this.e("Password is required");
             const res = await this.callApi(
                 "post",
-                "app/edit_tag",
+                "app/edit_user",
                 this.editData
             );
             if (res.status === 200) {
@@ -228,18 +264,20 @@ export default {
                 this.editModal = false;
             } else {
                 if (res.status == 422) {
-                    if (res.data.errors.tagName) {
-                        this.e(res.data.errors.tagName[0]);
+                    for (let i in res.data.errors) {
+                        this.e(res.data.errors[i][0]);
                     }
                 } else {
                     this.swr();
                 }
             }
         },
-        showEditModal(tag, index) {
+        showEditModal(user, index) {
             let obj = {
-                id: tag.id,
-                tagName: tag.tagName
+                id: user.id,
+                fullName: user.fullName,
+                email: user.email,
+                userType: user.userType
             };
             this.editData = obj;
             this.editModal = true;
