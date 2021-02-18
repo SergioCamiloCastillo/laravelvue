@@ -127,7 +127,8 @@ class AdminController extends Controller
     }
     public function getUser()
     {
-        return User::where('userType', '!=', 'User')->get();
+        return User::where('userType', '!=', 'User')->orderBy('id','desc')->get();
+
     }
     public function editUser(Request $request)
     {
