@@ -244,34 +244,29 @@ export default {
                 }
             }
         },
-        async editUser() {
-            if (this.editData.fullName.trim() == "")
-                return this.e("Fullname is required");
-            if (this.editData.email.trim() == "")
-                return this.e("Email is required");
-            if (this.editData.userType.trim() == "")
-                return this.e("User Type is required");
-            if (this.editData.password.trim() == "")
-                return this.e("Password is required");
-            const res = await this.callApi(
-                "post",
-                "app/edit_user",
-                this.editData
-            );
-            if (res.status === 200) {
-                this.users[this.index].tagName = this.editData.tagName;
-                this.s("Tag has been edited successfully!");
-                this.editModal = false;
-            } else {
-                if (res.status == 422) {
-                    for (let i in res.data.errors) {
-                        this.e(res.data.errors[i][0]);
+       async editUser(){
+			if(this.editData.fullName.trim()=='') return this.e('Full name is required')
+            if(this.editData.email.trim()=='') return this.e('Email is required')
+            if(this.editData.userType.trim()=='') return this.e('Email is required')
+
+			const res = await this.callApi('post', 'app/edit_user', this.editData)
+			if(res.status===200){
+				this.users[this.index] = this.editData
+				this.s('User has been edited successfully!')
+				this.editModal = false
+				
+			}else{
+				if(res.status==422){
+					for(let i in res.data.errors){
+                        this.e(res.data.errors[i][0])
                     }
-                } else {
-                    this.swr();
-                }
-            }
-        },
+					
+				}else{
+					this.swr()
+				}
+				
+			}
+		},
         showEditModal(user, index) {
             let obj = {
                 id: user.id,

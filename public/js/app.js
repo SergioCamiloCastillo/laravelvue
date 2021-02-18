@@ -2342,48 +2342,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(_this2.editData.fullName.trim() == "")) {
+                if (!(_this2.editData.fullName.trim() == '')) {
                   _context2.next = 2;
                   break;
                 }
 
-                return _context2.abrupt("return", _this2.e("Fullname is required"));
+                return _context2.abrupt("return", _this2.e('Full name is required'));
 
               case 2:
-                if (!(_this2.editData.email.trim() == "")) {
+                if (!(_this2.editData.email.trim() == '')) {
                   _context2.next = 4;
                   break;
                 }
 
-                return _context2.abrupt("return", _this2.e("Email is required"));
+                return _context2.abrupt("return", _this2.e('Email is required'));
 
               case 4:
-                if (!(_this2.editData.userType.trim() == "")) {
+                if (!(_this2.editData.userType.trim() == '')) {
                   _context2.next = 6;
                   break;
                 }
 
-                return _context2.abrupt("return", _this2.e("User Type is required"));
+                return _context2.abrupt("return", _this2.e('Email is required'));
 
               case 6:
-                if (!(_this2.editData.password.trim() == "")) {
-                  _context2.next = 8;
-                  break;
-                }
-
-                return _context2.abrupt("return", _this2.e("Password is required"));
+                _context2.next = 8;
+                return _this2.callApi('post', 'app/edit_user', _this2.editData);
 
               case 8:
-                _context2.next = 10;
-                return _this2.callApi("post", "app/edit_user", _this2.editData);
-
-              case 10:
                 res = _context2.sent;
 
                 if (res.status === 200) {
-                  _this2.users[_this2.index].tagName = _this2.editData.tagName;
+                  _this2.users[_this2.index] = _this2.editData;
 
-                  _this2.s("Tag has been edited successfully!");
+                  _this2.s('User has been edited successfully!');
 
                   _this2.editModal = false;
                 } else {
@@ -2396,7 +2388,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   }
                 }
 
-              case 12:
+              case 10:
               case "end":
                 return _context2.stop();
             }
