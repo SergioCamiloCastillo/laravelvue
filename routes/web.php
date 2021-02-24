@@ -29,9 +29,10 @@ Route::post('app/create_user','AdminController@addUser');
 Route::get('app/get_users', 'AdminController@getUser');
 Route::post('app/edit_user', 'AdminController@editUser');
 
-
-
 Route::post('app/delete_image', 'AdminController@deleteImage');
+
+Route::post('app/admin_login', 'AdminController@adminLogin');
+
 
 
 

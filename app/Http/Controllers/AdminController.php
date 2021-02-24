@@ -6,6 +6,8 @@ use App\Tag;
 use App\Category;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class AdminController extends Controller
 {
@@ -127,8 +129,7 @@ class AdminController extends Controller
     }
     public function getUser()
     {
-        return User::where('userType', '!=', 'User')->orderBy('id','desc')->get();
-
+        return User::where('userType', '!=', 'User')->orderBy('id', 'desc')->get();
     }
     public function editUser(Request $request)
     {
@@ -150,5 +151,21 @@ class AdminController extends Controller
 
         $user = User::where('id', $request->id)->update($data);
         return $user;
+    }
+    public function adminLogin(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'bail|required|email',
+            'password' => 'bail|required|min:6'
+        ]);
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'msg' => 'Tu estas logueado/a'
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'Datos incorrectos'
+            ], 401);
+        }
     }
 }
