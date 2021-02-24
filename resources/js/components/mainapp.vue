@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>
+        <div v-if="isLoggedIn">
             <!--========== ADMIN SIDE MENU one ========-->
             <div class="_1side_menu">
                 <div class="_1side_menu_logo">
@@ -19,8 +19,7 @@
                     <div class="_1side_menu_list">
                         <ul class="_1side_menu_list_ul">
                             <li>
-                                <router-link to="/"
-                                    >
+                                <router-link to="/">
                                     <Icon type="ios-home" />
                                     Dashboard</router-link
                                 >
@@ -86,3 +85,12 @@
         <router-view />
     </div>
 </template>
+<script>
+export default {
+    data() {
+        return {
+            isLoggedIn: false
+        };
+    }
+};
+</script>
