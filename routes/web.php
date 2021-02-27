@@ -32,8 +32,19 @@ Route::post('app/edit_user', 'AdminController@editUser');
 Route::post('app/delete_image', 'AdminController@deleteImage');
 
 Route::post('app/admin_login', 'AdminController@adminLogin');
+Route::get('/logout','AdminController@logout');
+
 Route::get('/','AdminController@index');
 Route::get('{slug}','AdminController@index');
 
 
+
+/*
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::get('{slug}', function () {
+    return view('welcome');
+});
+*/
 Route::get('/home', 'HomeController@index')->name('home');

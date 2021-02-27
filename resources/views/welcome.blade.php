@@ -17,8 +17,16 @@
     </head>
     <body>
         <div id="app"><!--La equita id debe ser app, como hemos visto en app.js-->
+              @if(Auth::check())
+                <mainapp :user="{{Auth::user()}}"></mainapp>
+              @else
+                <mainapp :user="false"></mainapp>
+              @endif
+
               
-                <mainapp></mainapp>
+                
+              
+                
              </div>
     </body>
     <script src="{{asset('js/app.js')}}"></script> <!--Añadimos el js generado con webpack, donde se encuentra nuestro componente vuejs-->

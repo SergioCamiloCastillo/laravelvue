@@ -60,7 +60,8 @@ export default {
                 this.data
             );
             if (res.status === 200) {
-                this.s(res.data.msg);
+                //this.s(res.data.msg);
+                window.location = "/";
             } else if (res.status == 422) {
                 for (let i in res.data.errors) {
                     this.e(res.data.errors[i][0]);

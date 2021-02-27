@@ -13,7 +13,27 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->path();
+        //Primero hay que revisar si el usuario esta y es administrador
+        if (!Auth::check() && $request->path() != 'login') {
+            return redirect('/login');
+        }
+        if (!Auth::check() && $request->path() == 'login') {
+            return view('welcome');
+        }
+        //Revisar si el usuario esta logueado y es administrador
+        $user = Auth::user();
+        if ($user->userType == 'User') {
+            return redirect('/login');
+        }
+        if ($request->path() == 'login') {
+            return redirect('/');
+        }
+        return view('welcome');
+    }
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/login');
     }
     public function addTag(Request $request)
     {
