@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use App\Category;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,5 +193,24 @@ class AdminController extends Controller
                 'msg' => 'Datos incorrectos'
             ], 401);
         }
+    }
+    public function addRole(Request $request){
+        $this->validate($request,[
+            'roleName'=>'required'
+        ]);
+        return Role::create([
+            'roleName' => $request->roleName
+        ]);
+    }
+    public function getRoles(){
+        return Role::all();
+    }
+    public function editRole(Request $request){
+        $this->validate($request,[
+            'roleName'=>'required'
+        ]);
+        return Role::where('id',$request->id)->update([
+            'roleName' => $request->roleName
+        ]);
     }
 }

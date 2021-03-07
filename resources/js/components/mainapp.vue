@@ -45,7 +45,7 @@
                             </li>
                             <li>
                                 <router-link to="role"
-                                    ><Icon type="ios-speedometer" /> Role
+                                    ><Icon type="md-person-add" /> Role
                                     Management</router-link
                                 >
                             </li>
