@@ -69,6 +69,14 @@ class AdminController extends Controller
         ]);
         return Tag::where('id', $request->id)->delete();
     }
+    public function deleteUser(Request $request)
+    {
+        // validate request
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        return User::where('id', $request->id)->delete();
+    }
     public function upload(Request $request)
     {
         $this->validate($request, [
@@ -141,20 +149,20 @@ class AdminController extends Controller
             'fullName' => 'required',
             'email' => 'bail:required|email|unique:users',
             'password' => 'required|min:6',
-            'userType' => 'required'
+            'role_id' => 'required'
         ]);
         $password = bcrypt($request->password);
         $user = User::create([
             'fullName' => $request->fullName,
             'email' => $request->email,
             'password' => $password,
-            'userType' => $request->userType
+            'role_id' => $request->role_id
         ]);
         return $user;
     }
     public function getUser()
     {
-        return User::where('userType', '!=', 'User')->orderBy('id', 'desc')->get();
+        return User::get();
     }
     public function editUser(Request $request)
     {
@@ -162,12 +170,12 @@ class AdminController extends Controller
             'fullName' => 'required',
             'email' => "bail:required|email|unique:users,email, $request->id",
             'password' => 'min:6',
-            'userType' => 'required'
+            'role_id' => 'required'
         ]);
         $data = [
             'fullName' => $request->fullName,
             'email' => $request->email,
-            'userType' => $request->userType
+            'role_id' => $request->role_id
         ];
         if ($request->password) {
             $password = bcrypt($request->password);
@@ -185,8 +193,14 @@ class AdminController extends Controller
         ]);
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
+            if ($user->role->isAdmin == '0') {
+                Auth::logout();
+                return response()->json([
+                    'msg' => 'Incorrect login details'
+                ]);
+            }
             return response()->json([
-                'msg' => 'Tu estas logueado/a'
+                'msg' => 'Tu estas logueado'
             ]);
         } else {
             return response()->json([
@@ -194,22 +208,25 @@ class AdminController extends Controller
             ], 401);
         }
     }
-    public function addRole(Request $request){
-        $this->validate($request,[
-            'roleName'=>'required'
+    public function addRole(Request $request)
+    {
+        $this->validate($request, [
+            'roleName' => 'required'
         ]);
         return Role::create([
             'roleName' => $request->roleName
         ]);
     }
-    public function getRoles(){
+    public function getRoles()
+    {
         return Role::all();
     }
-    public function editRole(Request $request){
-        $this->validate($request,[
-            'roleName'=>'required'
+    public function editRole(Request $request)
+    {
+        $this->validate($request, [
+            'roleName' => 'required'
         ]);
-        return Role::where('id',$request->id)->update([
+        return Role::where('id', $request->id)->update([
             'roleName' => $request->roleName
         ]);
     }

@@ -20,7 +20,7 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>User Type</th>
+                                <th>Role</th>
                                 <th>Created at</th>
                                 <th>Action</th>
                             </tr>
@@ -35,7 +35,7 @@
                                 <td>{{ user.id }}</td>
                                 <td class="_table_name">{{ user.fullName }}</td>
                                 <td class="">{{ user.email }}</td>
-                                <td class="">{{ user.userType }}</td>
+                                <td class="">{{ user.role_id }}</td>
 
                                 <td>{{ user.created_at }}</td>
                                 <td>
@@ -89,12 +89,11 @@
                     </div>
                     <div class="space">
                         <Select
-                            v-model="data.userType"
+                            v-model="data.role_id"
                             style="width:200px"
-                            placeholder="Select user type"
+                            placeholder="Select role"
                         >
-                            <Option value="Admin">Admin</Option>
-                            <Option value="Editor">Editor</Option>
+                            <Option :value="r.id" v-for="(r,i) in roles" :key="i" v-if='roles.length'>{{r.roleName}}</Option>
                         </Select>
                     </div>
 
@@ -141,12 +140,11 @@
                     </div>
                     <div class="space">
                         <Select
-                            v-model="editData.userType"
+                            v-model="editData.role_id"
                             style="width:200px"
-                            placeholder="Select user type"
+                            placeholder="Select role"
                         >
-                            <Option value="Admin">Admin</Option>
-                            <Option value="Editor">Editor</Option>
+                            <Option :value="r.id" v-for="(r,i) in roles" :key="i" v-if='roles.length'>{{r.roleName}}</Option>
                         </Select>
                     </div>
 
@@ -193,7 +191,7 @@ export default {
                 fullName: "",
                 password: "",
                 email: "",
-                userType: ""
+                role_id:null
             },
             addModal: false,
             editModal: false,
@@ -203,14 +201,15 @@ export default {
                 fullName: "",
                 password: "",
                 email: "",
-                userType: ""
+                role_id: ""
             },
             index: -1,
             showDeleteModal: false,
             isDeleing: false,
             deleteItem: {},
             deletingIndex: -1,
-            websiteSettings: []
+            websiteSettings: [],
+            roles: []
         };
     },
     methods: {
@@ -219,8 +218,8 @@ export default {
                 return this.e("Fullname is required");
             if (this.data.email.trim() == "")
                 return this.e("Email is required");
-            if (this.data.userType.trim() == "")
-                return this.e("User Type is required");
+            if (!this.data.role_id)
+                return this.e("Role is required");
             if (this.data.password.trim() == "")
                 return this.e("Password is required");
 
@@ -244,35 +243,41 @@ export default {
                 }
             }
         },
-       async editUser(){
-			if(this.editData.fullName.trim()=='') return this.e('Full name is required')
-            if(this.editData.email.trim()=='') return this.e('Email is required')
-            if(this.editData.userType.trim()=='') return this.e('Email is required')
+        async editUser() {
+            if (this.editData.fullName.trim() == "")
+                return this.e("Full name is required");
+            if (this.editData.email.trim() == "")
+                return this.e("Email is required");
+            if (!this.editData.role_id)
+                return this.e("Role is required");
 
-			const res = await this.callApi('post', 'app/edit_user', this.editData)
-			if(res.status===200){
-				this.users[this.index] = this.editData
-				this.s('User has been edited successfully!')
-				this.editModal = false
-				
-			}else{
-				if(res.status==422){
-					for(let i in res.data.errors){
-                        this.e(res.data.errors[i][0])
+            const res = await this.callApi(
+                "post",
+                "app/edit_user",
+                this.editData
+            );
+            if (res.status === 200) {
+                this.users[this.index] = this.editData;
+                this.s("User has been edited successfully!");
+                this.editModal = false;
+            } else {
+                if (res.status == 422) {
+                    for (let i in res.data.errors) {
+                        this.e(res.data.errors[i][0]);
                     }
-					
-				}else{
-					this.swr()
-				}
-				
-			}
-		},
+                } else {
+                    this.swr();
+                }
+            }
+        },
         showEditModal(user, index) {
             let obj = {
                 id: user.id,
                 fullName: user.fullName,
                 email: user.email,
-                userType: user.userType
+                role_id: user.role_id,
+                created_at:user.created_at
+                
             };
             this.editData = obj;
             this.editModal = true;
@@ -298,7 +303,7 @@ export default {
             this.deletingIndex = i;
             const deleteModalObj = {
                 showDeleteModal: true,
-                deleteUrl: "app/delete_tag",
+                deleteUrl: "app/delete_user",
                 data: tag,
                 deletingIndex: i,
                 isDeleted: false
@@ -311,9 +316,18 @@ export default {
         }
     },
     async created() {
-        const res = await this.callApi("get", "app/get_users");
+        const [res, resRole] = await Promise.all([
+            this.callApi("get", "app/get_users"),
+            await this.callApi("get", "app/get_roles")
+        ]);
+
         if (res.status == 200) {
             this.users = res.data;
+        } else {
+            this.swr();
+        }
+        if (resRole.status == 200) {
+            this.roles = resRole.data;
         } else {
             this.swr();
         }
