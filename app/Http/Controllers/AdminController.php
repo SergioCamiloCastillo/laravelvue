@@ -69,6 +69,14 @@ class AdminController extends Controller
         ]);
         return Tag::where('id', $request->id)->delete();
     }
+    public function deleteRole(Request $request)
+    {
+        // validate request
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        return Role::where('id', $request->id)->delete();
+    }
     public function deleteUser(Request $request)
     {
         // validate request
@@ -196,8 +204,8 @@ class AdminController extends Controller
             if ($user->role->isAdmin == '0') {
                 Auth::logout();
                 return response()->json([
-                    'msg' => 'Incorrect login details'
-                ]);
+                    'msg' => 'Usuario no autorizado'
+                ],401);
             }
             return response()->json([
                 'msg' => 'Tu estas logueado'
