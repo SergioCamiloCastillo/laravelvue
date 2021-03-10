@@ -318,7 +318,7 @@ export default {
     async created() {
         const [res, resRole] = await Promise.all([
             this.callApi("get", "app/get_users"),
-            await this.callApi("get", "app/get_roles")
+            this.callApi("get", "app/get_roles")
         ]);
 
         if (res.status == 200) {

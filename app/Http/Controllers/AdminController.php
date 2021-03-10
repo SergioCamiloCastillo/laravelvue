@@ -171,6 +171,7 @@ class AdminController extends Controller
     public function getUser()
     {
         return User::get();
+        
     }
     public function editUser(Request $request)
     {

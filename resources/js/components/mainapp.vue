@@ -51,15 +51,15 @@
                             </li>
                             <li>
                                 <router-link to="assignRole"
-                                    ><Icon type="ios-speedometer" /> Assign
-                                    role</router-link
+                                    ><Icon type="ios-clipboard-outline" />
+                                    Assign role</router-link
                                 >
                             </li>
 
                             <li>
                                 <a href="/logout"
-                                    ><Icon type="md-exit" /> Logout</a>
-                                
+                                    ><Icon type="md-exit" /> Logout</a
+                                >
                             </li>
                         </ul>
                     </div>
@@ -87,14 +87,14 @@
 </template>
 <script>
 export default {
-    props:['user'],
+    props: ["user"],
     data() {
         return {
             isLoggedIn: false
         };
     },
-    created(){
-        this.$store.commit('updateUser', this.user);
+    created() {
+        this.$store.commit("updateUser", this.user);
     }
 };
 </script>
