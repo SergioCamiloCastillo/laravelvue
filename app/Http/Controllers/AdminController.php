@@ -171,7 +171,6 @@ class AdminController extends Controller
     public function getUser()
     {
         return User::get();
-        
     }
     public function editUser(Request $request)
     {
@@ -206,7 +205,7 @@ class AdminController extends Controller
                 Auth::logout();
                 return response()->json([
                     'msg' => 'Usuario no autorizado'
-                ],401);
+                ], 401);
             }
             return response()->json([
                 'msg' => 'Tu estas logueado'
@@ -238,5 +237,13 @@ class AdminController extends Controller
         return Role::where('id', $request->id)->update([
             'roleName' => $request->roleName
         ]);
+    }
+    function assignRole(Request $request)
+    {
+        $this->validate($request, [
+            'permission' => 'required',
+            'id' => 'required'
+        ]);
+        return Role::where('id', $request->id)->update(['permission' => $request->permission]);
     }
 }

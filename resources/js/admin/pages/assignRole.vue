@@ -9,7 +9,7 @@
                     <p class="_title0">
                         Role Management
                         <Select
-                            v-model="data.role_id"
+                            v-model="data.id"
                             style="width:200px"
                             placeholder="Select role"
                         >
@@ -39,27 +39,28 @@
                             <tr v-for="(r, i) in resources" :key="i">
                                 <td>{{ r.resourceName }}</td>
                                 <td>
-                                    <Checkbox v-model="r.read"
-                                        ></Checkbox
-                                    >
+                                    <Checkbox v-model="r.read"></Checkbox>
                                 </td>
-                                 <td>
-                                    <Checkbox v-model="r.write"
-                                        ></Checkbox
-                                    >
+                                <td>
+                                    <Checkbox v-model="r.write"></Checkbox>
                                 </td>
-                                 <td>
-                                    <Checkbox v-model="r.update"
-                                        ></Checkbox
-                                    >
+                                <td>
+                                    <Checkbox v-model="r.update"></Checkbox>
                                 </td>
-                                 <td>
-                                    <Checkbox v-model="r.delete"
-                                        ></Checkbox
-                                    >
+                                <td>
+                                    <Checkbox v-model="r.delete"></Checkbox>
                                 </td>
                             </tr>
                             <!-- ITEMS -->
+                            <div class="center_button">
+                                <Button
+                                    type="primary"
+                                    :loading="isSending"
+                                    :disabled="isSending"
+                                    @click="assignRoles"
+                                    >Assign</Button
+                                >
+                            </div>
                         </table>
                     </div>
                 </div>
@@ -76,68 +77,87 @@ export default {
         return {
             data: {
                 roleName: "",
-                role_id: null
+                id: null
             },
+            isSending: false,
             roles: [],
             resources: [
-                  {
-                    resourceName:'Home',
+                {
+                    resourceName: "Home",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name: 'home'
+                    name: "home"
                 },
                 {
-                    resourceName: 'Tags',
+                    resourceName: "Tags",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name:'tags'
+                    name: "tags"
                 },
                 {
-                    resourceName: 'Category',
+                    resourceName: "Category",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name: 'category'
+                    name: "category"
                 },
                 {
-                    resourceName: 'Adminusers',
+                    resourceName: "Adminusers",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name: 'adminusers'
+                    name: "adminusers"
                 },
                 {
-                    resourceName: 'Role',
+                    resourceName: "Role",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name: 'role'
+                    name: "role"
                 },
                 {
-                    resourceName: 'AssignRole',
+                    resourceName: "AssignRole",
                     read: false,
                     write: false,
                     update: false,
                     delete: false,
-                    name: 'assignRole'
-                },
-              
+                    name: "assignRole"
+                }
             ]
         };
     },
-    methods: {},
+    methods: {
+        async assignRoles() {
+            let data = JSON.stringify(this.resources);
+            const res = await this.callApi("post", "app/assign_roles", {
+                'permission': data,
+                id:this.data.id
+            });
+            if (res.status == 200) {
+                this.s("Role has been assign success");
+            }else{
+                this.swr();
+            }
+        }
+    },
     async created() {
         const res = await this.callApi("get", "app/get_roles");
 
         if (res.status == 200) {
             this.roles = res.data;
+            if (res.data.length) {
+                this.data.id = res.data[0].id;
+                if(res.data[0].permission){
+                    this.resources=JSON.parse(res.data[0].permission);
+                }
+            }
         } else {
             this.swr();
         }

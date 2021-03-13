@@ -7,6 +7,7 @@
         <title>Laravel</title>
 
         <link rel="stylesheet" href="/css/all.css">
+        <link rel="stylesheet" href="/css/main.css">
         <script>
             (function(){
                 window.Laravel={
