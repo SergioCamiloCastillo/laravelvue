@@ -2608,16 +2608,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       data: {
-        roleName: "",
         id: null
       },
       isSending: false,
@@ -2628,7 +2622,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         write: false,
         update: false,
         "delete": false,
-        name: "home"
+        name: "/"
       }, {
         resourceName: "Tags",
         read: false,
@@ -2644,7 +2638,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         "delete": false,
         name: "category"
       }, {
-        resourceName: "Adminusers",
+        resourceName: "Create blogs",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "createBlog"
+      }, {
+        resourceName: "Blogs",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "blogs"
+      }, {
+        resourceName: "Admin users",
         read: false,
         write: false,
         update: false,
@@ -2658,7 +2666,64 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         "delete": false,
         name: "role"
       }, {
-        resourceName: "AssignRole",
+        resourceName: "Assign Role",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "assignRole"
+      }],
+      defaultResourcesPermission: [{
+        resourceName: "Home",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "/"
+      }, {
+        resourceName: "Tags",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "tags"
+      }, {
+        resourceName: "Category",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "category"
+      }, {
+        resourceName: "Create blogs",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "createBlog"
+      }, {
+        resourceName: "Blogs",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "blogs"
+      }, {
+        resourceName: "Admin users",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "adminusers"
+      }, {
+        resourceName: "Role",
+        read: false,
+        write: false,
+        update: false,
+        "delete": false,
+        name: "role"
+      }, {
+        resourceName: "Assign Role",
         read: false,
         write: false,
         update: false,
@@ -2672,7 +2737,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var data, res;
+        var data, res, index;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -2680,7 +2745,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 data = JSON.stringify(_this.resources);
                 _context.next = 3;
                 return _this.callApi("post", "app/assign_roles", {
-                  'permission': data,
+                  permission: data,
                   id: _this.data.id
                 });
 
@@ -2688,7 +2753,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 res = _context.sent;
 
                 if (res.status == 200) {
-                  _this.s("Role has been assign success");
+                  _this.s("Role has been assigned successfully!");
+
+                  index = _this.roles.findIndex(function (role) {
+                    return role.id == _this.data.id;
+                  });
+                  _this.roles[index].permission = data;
                 } else {
                   _this.swr();
                 }
@@ -2700,10 +2770,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
+    },
+    changeAdmin: function changeAdmin() {
+      var _this2 = this;
+
+      var index = this.roles.findIndex(function (role) {
+        return role.id == _this2.data.id;
+      });
+      var permission = this.roles[index].permission;
+
+      if (!permission) {
+        this.resources = this.defaultResourcesPermission;
+      } else {
+        this.resources = JSON.parse(permission);
+      }
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
       var res;
@@ -2711,27 +2795,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              _context2.next = 2;
-              return _this2.callApi("get", "app/get_roles");
+              console.log(_this3.$route);
+              _context2.next = 3;
+              return _this3.callApi("get", "app/get_roles");
 
-            case 2:
+            case 3:
               res = _context2.sent;
 
               if (res.status == 200) {
-                _this2.roles = res.data;
+                _this3.roles = res.data;
 
                 if (res.data.length) {
-                  _this2.data.id = res.data[0].id;
+                  _this3.data.id = res.data[0].id;
 
                   if (res.data[0].permission) {
-                    _this2.resources = JSON.parse(res.data[0].permission);
+                    _this3.resources = JSON.parse(res.data[0].permission); //this.resources = this.defaultResourcesPermission
                   }
                 }
               } else {
-                _this2.swr();
+                _this3.swr();
               }
 
-            case 4:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -87704,13 +87789,14 @@ var render = function() {
               { staticClass: "_title0" },
               [
                 _vm._v(
-                  "\n                    Role Management\n                    "
+                  "\n                    Role Manangement\n                    "
                 ),
                 _c(
                   "Select",
                   {
-                    staticStyle: { width: "200px" },
-                    attrs: { placeholder: "Select role" },
+                    staticStyle: { width: "300px" },
+                    attrs: { placeholder: "Select admin type" },
+                    on: { "on-change": _vm.changeAdmin },
                     model: {
                       value: _vm.data.id,
                       callback: function($$v) {
@@ -87844,7 +87930,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("th", [_vm._v("Resource Name")]),
+      _c("th", [_vm._v("Resource name")]),
       _vm._v(" "),
       _c("th", [_vm._v("Read")]),
       _vm._v(" "),

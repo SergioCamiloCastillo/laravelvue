@@ -7,11 +7,12 @@
                     class="_1adminOverveiw_table_recent _box_shadow _border_radious _mar_b30 _p20"
                 >
                     <p class="_title0">
-                        Role Management
+                        Role Manangement
                         <Select
                             v-model="data.id"
-                            style="width:200px"
-                            placeholder="Select role"
+                            placeholder="Select admin type"
+                            style="width:300px"
+                            @on-change="changeAdmin"
                         >
                             <Option
                                 :value="r.id"
@@ -27,7 +28,7 @@
                         <table class="_table">
                             <!-- TABLE TITLE -->
                             <tr>
-                                <th>Resource Name</th>
+                                <th>Resource name</th>
                                 <th>Read</th>
                                 <th>Write</th>
                                 <th>Update</th>
@@ -38,12 +39,8 @@
                             <!-- ITEMS -->
                             <tr v-for="(r, i) in resources" :key="i">
                                 <td>{{ r.resourceName }}</td>
-                                <td>
-                                    <Checkbox v-model="r.read"></Checkbox>
-                                </td>
-                                <td>
-                                    <Checkbox v-model="r.write"></Checkbox>
-                                </td>
+                                <td><Checkbox v-model="r.read"></Checkbox></td>
+                                <td><Checkbox v-model="r.write"></Checkbox></td>
                                 <td>
                                     <Checkbox v-model="r.update"></Checkbox>
                                 </td>
@@ -64,8 +61,6 @@
                         </table>
                     </div>
                 </div>
-
-                <!-- role editing modal -->
             </div>
         </div>
     </div>
@@ -76,7 +71,6 @@ export default {
     data() {
         return {
             data: {
-                roleName: "",
                 id: null
             },
             isSending: false,
@@ -88,7 +82,7 @@ export default {
                     write: false,
                     update: false,
                     delete: false,
-                    name: "home"
+                    name: "/"
                 },
                 {
                     resourceName: "Tags",
@@ -107,7 +101,23 @@ export default {
                     name: "category"
                 },
                 {
-                    resourceName: "Adminusers",
+                    resourceName: "Create blogs",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "createBlog"
+                },
+                {
+                    resourceName: "Blogs",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "blogs"
+                },
+                {
+                    resourceName: "Admin users",
                     read: false,
                     write: false,
                     update: false,
@@ -123,7 +133,73 @@ export default {
                     name: "role"
                 },
                 {
-                    resourceName: "AssignRole",
+                    resourceName: "Assign Role",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "assignRole"
+                }
+            ],
+            defaultResourcesPermission: [
+                {
+                    resourceName: "Home",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "/"
+                },
+                {
+                    resourceName: "Tags",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "tags"
+                },
+                {
+                    resourceName: "Category",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "category"
+                },
+                {
+                    resourceName: "Create blogs",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "createBlog"
+                },
+                {
+                    resourceName: "Blogs",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "blogs"
+                },
+                {
+                    resourceName: "Admin users",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "adminusers"
+                },
+                {
+                    resourceName: "Role",
+                    read: false,
+                    write: false,
+                    update: false,
+                    delete: false,
+                    name: "role"
+                },
+                {
+                    resourceName: "Assign Role",
                     read: false,
                     write: false,
                     update: false,
@@ -137,25 +213,39 @@ export default {
         async assignRoles() {
             let data = JSON.stringify(this.resources);
             const res = await this.callApi("post", "app/assign_roles", {
-                'permission': data,
-                id:this.data.id
+                permission: data,
+                id: this.data.id
             });
             if (res.status == 200) {
-                this.s("Role has been assign success");
-            }else{
+                this.s("Role has been assigned successfully!");
+                let index = this.roles.findIndex(
+                    role => role.id == this.data.id
+                );
+                this.roles[index].permission = data;
+            } else {
                 this.swr();
+            }
+        },
+        changeAdmin() {
+            let index = this.roles.findIndex(role => role.id == this.data.id);
+            let permission = this.roles[index].permission;
+            if (!permission) {
+                this.resources = this.defaultResourcesPermission;
+            } else {
+                this.resources = JSON.parse(permission);
             }
         }
     },
     async created() {
+        console.log(this.$route);
         const res = await this.callApi("get", "app/get_roles");
-
         if (res.status == 200) {
             this.roles = res.data;
             if (res.data.length) {
                 this.data.id = res.data[0].id;
-                if(res.data[0].permission){
-                    this.resources=JSON.parse(res.data[0].permission);
+                if (res.data[0].permission) {
+                    this.resources = JSON.parse(res.data[0].permission);
+                    //this.resources = this.defaultResourcesPermission
                 }
             }
         } else {
