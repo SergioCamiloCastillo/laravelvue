@@ -29,7 +29,28 @@ class AdminController extends Controller
         if ($request->path() == 'login') {
             return redirect('/');
         }
-        return view('welcome');
+        return $this->checkForPermission($user, $request);
+
+        
+        
+    }
+    public function checkForPermission($user, $request)
+    {
+
+        $permission = json_decode($user->role->permission);
+        $hasPermission = false;
+        foreach ($permission as $page) {
+            if ($page->name == $request->path()) {
+                if($page->read){
+                    $hasPermission = true;
+
+                }
+            }
+        }
+        if($hasPermission){
+            return view('welcome'); 
+        }
+        return view('notfound');
     }
     public function logout()
     {
