@@ -4,32 +4,27 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Full stack blog</title>
 
         <link rel="stylesheet" href="/css/all.css">
-        <link rel="stylesheet" href="/css/main.css">
         <script>
-            (function(){
-                window.Laravel={
-                    csrfToken:'{{csrf_token()}}'
-                }
+            (function () {
+                window.Laravel = {
+                    csrfToken: '{{ csrf_token() }}'
+                };
             })();
         </script>
+
     </head>
     <body>
-        <div id="app"><!--La equita id debe ser app, como hemos visto en app.js-->
-              @if(Auth::check())
-                <mainapp :user="{{Auth::user()}}"></mainapp>
-              @else
+         <div id="app">
+             @if(Auth::check())
+                <mainapp :user="{{Auth::user()}}" :permission="{{Auth::user()->role->permission}}"></mainapp>
+            @else
                 <mainapp :user="false"></mainapp>
-              @endif
-
-              
-                
-              
-                
-             </div>
+            @endif
+         </div>
     </body>
-    <script src="{{asset('js/app.js')}}"></script> <!--Añadimos el js generado con webpack, donde se encuentra nuestro componente vuejs-->
+    <script src="{{mix('/js/app.js')}}"></script>
 
 </html>

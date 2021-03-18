@@ -2588,26 +2588,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2617,118 +2597,118 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       isSending: false,
       roles: [],
       resources: [{
-        resourceName: "Home",
+        resourceName: 'Home',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "/"
+        name: '/'
       }, {
-        resourceName: "Tags",
+        resourceName: 'Tags',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "tags"
+        name: 'tags'
       }, {
-        resourceName: "Category",
+        resourceName: 'Category',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "category"
+        name: 'category'
       }, {
-        resourceName: "Create blogs",
+        resourceName: 'Create blogs',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "createBlog"
+        name: 'createBlog'
       }, {
-        resourceName: "Blogs",
+        resourceName: 'Blogs',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "blogs"
+        name: 'blogs'
       }, {
-        resourceName: "Admin users",
+        resourceName: 'Admin users',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "adminusers"
+        name: 'adminusers'
       }, {
-        resourceName: "Role",
+        resourceName: 'Role',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "role"
+        name: 'role'
       }, {
-        resourceName: "Assign Role",
+        resourceName: 'Assign Role',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "assignRole"
+        name: 'assignRole'
       }],
       defaultResourcesPermission: [{
-        resourceName: "Home",
+        resourceName: 'Home',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "/"
+        name: '/'
       }, {
-        resourceName: "Tags",
+        resourceName: 'Tags',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "tags"
+        name: 'tags'
       }, {
-        resourceName: "Category",
+        resourceName: 'Category',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "category"
+        name: 'category'
       }, {
-        resourceName: "Create blogs",
+        resourceName: 'Create blogs',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "createBlog"
+        name: 'createBlog'
       }, {
-        resourceName: "Blogs",
+        resourceName: 'Blogs',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "blogs"
+        name: 'blogs'
       }, {
-        resourceName: "Admin users",
+        resourceName: 'Admin users',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "adminusers"
+        name: 'adminusers'
       }, {
-        resourceName: "Role",
+        resourceName: 'Role',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "role"
+        name: 'role'
       }, {
-        resourceName: "Assign Role",
+        resourceName: 'Assign Role',
         read: false,
         write: false,
         update: false,
         "delete": false,
-        name: "assignRole"
+        name: 'assignRole'
       }]
     };
   },
@@ -2744,8 +2724,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 data = JSON.stringify(_this.resources);
                 _context.next = 3;
-                return _this.callApi("post", "app/assign_roles", {
-                  permission: data,
+                return _this.callApi('post', 'app/assign_roles', {
+                  'permission': data,
                   id: _this.data.id
                 });
 
@@ -2753,7 +2733,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 res = _context.sent;
 
                 if (res.status == 200) {
-                  _this.s("Role has been assigned successfully!");
+                  _this.s('Role has been assigned successfully!');
 
                   index = _this.roles.findIndex(function (role) {
                     return role.id == _this.data.id;
@@ -2797,7 +2777,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             case 0:
               console.log(_this3.$route);
               _context2.next = 3;
-              return _this3.callApi("get", "app/get_roles");
+              return _this3.callApi('get', 'app/get_roles');
 
             case 3:
               res = _context2.sent;
@@ -4292,44 +4272,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["user"],
+  props: ['user', 'permission'],
   data: function data() {
     return {
       isLoggedIn: false
     };
   },
   created: function created() {
-    this.$store.commit("updateUser", this.user);
+    this.$store.commit('setUpdateUser', this.user);
+    this.$store.commit('setUserPermission', this.permission);
   }
 });
 
@@ -87788,9 +87740,7 @@ var render = function() {
               "p",
               { staticClass: "_title0" },
               [
-                _vm._v(
-                  "\n                    Role Manangement\n                    "
-                ),
+                _vm._v("\n          Role Manangement\n           "),
                 _c(
                   "Select",
                   {
@@ -89042,127 +88992,47 @@ var render = function() {
                 _vm._m(1),
                 _vm._v(" "),
                 _c("div", { staticClass: "_1side_menu_list" }, [
-                  _c("ul", { staticClass: "_1side_menu_list_ul" }, [
-                    _c(
-                      "li",
-                      [
-                        _c(
-                          "router-link",
-                          { attrs: { to: "/" } },
-                          [
-                            _c("Icon", { attrs: { type: "ios-home" } }),
-                            _vm._v(
-                              "\n                                Dashboard"
+                  _c(
+                    "ul",
+                    { staticClass: "_1side_menu_list_ul" },
+                    [
+                      _vm._l(_vm.permission, function(menuItem, i) {
+                        return _vm.permission.length && menuItem.read
+                          ? _c(
+                              "li",
+                              { key: i },
+                              [
+                                _c(
+                                  "router-link",
+                                  { attrs: { to: "/" + menuItem.name } },
+                                  [
+                                    _c("Icon", {
+                                      attrs: { type: "ios-speedometer" }
+                                    }),
+                                    _vm._v(" " + _vm._s(menuItem.resourceName))
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
                             )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      [
+                          : _vm._e()
+                      }),
+                      _vm._v(" "),
+                      _c("li", [
                         _c(
-                          "router-link",
-                          { attrs: { to: "tags" } },
+                          "a",
+                          { attrs: { href: "/logout" } },
                           [
-                            _c("Icon", { attrs: { type: "ios-bookmark" } }),
-                            _vm._v("\n                                Tags")
+                            _c("Icon", { attrs: { type: "ios-speedometer" } }),
+                            _vm._v(" Logout")
                           ],
                           1
                         )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      [
-                        _c(
-                          "router-link",
-                          { attrs: { to: "category" } },
-                          [
-                            _c("Icon", {
-                              attrs: { type: "ios-list-box-outline" }
-                            }),
-                            _vm._v("\n                                Category")
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      [
-                        _c(
-                          "router-link",
-                          { attrs: { to: "adminusers" } },
-                          [
-                            _c("Icon", { attrs: { type: "md-people" } }),
-                            _vm._v(
-                              " Admin\n                                users"
-                            )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      [
-                        _c(
-                          "router-link",
-                          { attrs: { to: "role" } },
-                          [
-                            _c("Icon", { attrs: { type: "md-person-add" } }),
-                            _vm._v(
-                              " Role\n                                Management"
-                            )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "li",
-                      [
-                        _c(
-                          "router-link",
-                          { attrs: { to: "assignRole" } },
-                          [
-                            _c("Icon", {
-                              attrs: { type: "ios-clipboard-outline" }
-                            }),
-                            _vm._v(
-                              "\n                                Assign role"
-                            )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c("li", [
-                      _c(
-                        "a",
-                        { attrs: { href: "/logout" } },
-                        [
-                          _c("Icon", { attrs: { type: "md-exit" } }),
-                          _vm._v(" Logout")
-                        ],
-                        1
-                      )
-                    ])
-                  ])
+                      ])
+                    ],
+                    2
+                  )
                 ])
               ])
             ]),

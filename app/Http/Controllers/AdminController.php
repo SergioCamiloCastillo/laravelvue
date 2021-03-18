@@ -14,14 +14,19 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        //Primero hay que revisar si el usuario esta y es administrador
+
+        // first check if you are loggedin and admin user ...
+        //return Auth::check();
+
         if (!Auth::check() && $request->path() != 'login') {
             return redirect('/login');
         }
+
         if (!Auth::check() && $request->path() == 'login') {
+
             return view('welcome');
         }
-        //Revisar si el usuario esta logueado y es administrador
+        // you are already logged in... so check for if you are an admin user..
         $user = Auth::user();
         if ($user->userType == 'User') {
             return redirect('/login');
@@ -29,27 +34,29 @@ class AdminController extends Controller
         if ($request->path() == 'login') {
             return redirect('/');
         }
-        return $this->checkForPermission($user, $request);
 
-        
-        
+        return $this->checkForPermission($user, $request);
     }
     public function checkForPermission($user, $request)
     {
-
         $permission = json_decode($user->role->permission);
         $hasPermission = false;
-        foreach ($permission as $page) {
-            if ($page->name == $request->path()) {
-                if($page->read){
-                    $hasPermission = true;
+        if (!$permission) {
+            return view('welcome');
+        }
 
+        foreach ($permission as $p) {
+            if ($p->name == $request->path()) {
+                if ($p->read) {
+                    $hasPermission = true;
                 }
             }
         }
-        if($hasPermission){
-            return view('welcome'); 
+        if ($hasPermission) {
+            return view('welcome');
         }
+
+       
         return view('notfound');
     }
     public function logout()
