@@ -1,5 +1,5 @@
 import Axios from "axios"
-
+import {mapGetters} from 'vuex';
 export default{
     data(){
         return{
@@ -47,7 +47,44 @@ export default{
                 title:title,
                 desc:desc
             })
+        },
+        checkUserPermission(key){
+            if(this.userPermission){
+                return true
+            }
+            let isPermitted = false;
+            for(let d of this.userPermission){
+                if(this.$route.name == d.name){
+                    if(d[key]){
+                        isPermitted = true
+                        break;
+                    }else{
+                        break;
+                    }
+                }
+                return isPermitted
+            }
+            console.log(this.$route.name);
         }
 
-    }
+    },
+    computed:{
+        ...mapGetters({'userPermission': 'getUserPermission'}),
+        isReadPermitted(){
+            return this.checkUserPermission('read')
+        },
+        isWritePermitted(){
+            return this.checkUserPermission('write')
+
+        },
+        
+        isUpdatePermitted(){
+            return this.checkUserPermission('update')
+
+        },
+        isDeletePermitted(){
+            return this.checkUserPermission('delete')
+
+        }
+    },
 }

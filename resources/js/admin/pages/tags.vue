@@ -8,7 +8,7 @@
                 >
                     <p class="_title0">
                         Tags
-                        <Button @click="addModal = true" 
+                        <Button @click="addModal = true" v-if="isWritePermitted"
                             ><Icon type="md-add" /> Add tag</Button
                         >
                     </p>
@@ -38,7 +38,7 @@
                                         type="info"
                                         size="small"
                                         @click="showEditModal(tag, i)"
-                                    
+                                    v-if='isUpdatePermitted'
                                         >Edit</Button
                                     >
                                     <Button
@@ -46,6 +46,7 @@
                                         size="small"
                                         @click="showDeletingModal(tag, i)"
                                         :loading="tag.isDeleting"
+                                         v-if='isDeletePermitted'
                                         >Delete</Button
                                     >
                                 </td>
@@ -230,6 +231,7 @@ export default {
         }
     },
     async created() {
+        //console.log(this.isReadPermitted());
         const res = await this.callApi("get", "app/get_tags");
         if (res.status == 200) {
             this.tags = res.data;
